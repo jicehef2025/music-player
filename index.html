@@ -1,0 +1,1774 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Music Player - JC Fouché 2026 - www.lehubnumerique.com</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600&family=Barlow+Semi+Condensed:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#0c0e10;--bay:#111417;--bay-2:#171b20;--scope:#080a0c;--rule:#1e2328;--rule-2:#333a42;
+  --fg:#e6e9ec;--muted:#8e979f;--dim:#5f6870;--amber:#e8b84a;--amber-ink:#0c0e10;--phos:#86e0a2;
+  --bad:#ef6b6b;--warn:#f0a35e;--blue:#5b95f0;--violet:#c9a8ff;
+  --f-disp:'Barlow Condensed','Arial Narrow',sans-serif;--f-ui:'Barlow Semi Condensed',system-ui,sans-serif;--f-mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--f-ui);font-size:15px;line-height:1.4}
+a{color:var(--amber)}
+button,input,select{font:inherit;color:inherit}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+[hidden]{display:none!important}
+
+/* ---------- en-tête ---------- */
+header.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:6px 20px;padding:14px 16px 10px;border-bottom:1px solid var(--rule);background:linear-gradient(#121519,#0c0e10)}
+.brand h1{margin:0;font-family:var(--f-disp);font-weight:600;font-size:1.6rem;letter-spacing:.05em;text-transform:uppercase;line-height:1.1}
+.brand h1 span{color:var(--amber);font-weight:500;font-size:inherit;letter-spacing:.06em;margin-left:6px}
+.brand h1 a.site{font-size:inherit;font-weight:500;letter-spacing:.04em;text-transform:none;text-decoration:none}
+.brand .sub{margin:3px 0 0;color:var(--muted);font-size:.88rem}
+.hinfo{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;font-size:.78rem;color:var(--dim)}
+.btn.fs{font-size:.84rem;padding:5px 12px;border-color:var(--amber);color:var(--amber)}
+.btn.fs svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2}
+.btn.fs:hover:not(:disabled){background:var(--amber);border-color:var(--amber);color:var(--amber-ink)}
+html:fullscreen,html:-webkit-full-screen{background:var(--bg)}
+html:fullscreen body{min-height:100vh;overflow:auto}
+
+/* ---------- mise en page ---------- */
+.app{display:grid;gap:12px;padding:12px;max-width:1560px;margin:0 auto}
+.row1{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,380px);gap:12px;align-items:stretch}
+.row2{display:grid;grid-template-columns:minmax(220px,280px) minmax(0,1fr) minmax(260px,340px);gap:12px;align-items:start}
+.side{display:grid;gap:12px}
+@media (max-width:1180px){.row2{grid-template-columns:minmax(210px,260px) minmax(0,1fr)}.side{grid-column:1/-1;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}}
+@media (max-width:820px){.row1,.row2{grid-template-columns:minmax(0,1fr)}}
+
+.bay{background:var(--bay);border:1px solid var(--rule);border-radius:8px;padding:12px 14px;min-width:0}
+.bay-head{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;margin-bottom:10px}
+.bay-head h2{margin:0 auto 0 0;font-family:var(--f-disp);font-weight:600;font-size:1.12rem;letter-spacing:.08em;text-transform:uppercase;display:flex;align-items:center;gap:8px}
+.bay-head h2::before{content:"";width:3px;height:1em;background:var(--amber);border-radius:2px}
+.cap{font-size:.78rem;color:var(--dim);margin:6px 0 0}
+.warn{color:var(--warn)}
+
+/* ---------- boutons ---------- */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border:1px solid var(--rule-2);border-radius:5px;background:var(--bay-2);color:var(--fg);cursor:pointer;font-size:.86rem;white-space:nowrap;line-height:1.35}
+.btn:hover:not(:disabled){border-color:var(--amber);color:var(--amber)}
+.btn.primary{background:var(--amber);border-color:var(--amber);color:var(--amber-ink);font-weight:600}
+.btn.primary:hover:not(:disabled){filter:brightness(1.08);color:var(--amber-ink)}
+.btn:disabled{opacity:.4;cursor:default}
+.ib{width:24px;height:24px;display:inline-grid;place-items:center;border:1px solid transparent;border-radius:4px;background:none;color:var(--muted);cursor:pointer;font-size:.85rem;padding:0}
+.ib:hover{border-color:var(--rule-2);color:var(--amber);background:var(--bay-2)}
+.ib.del:hover{color:var(--bad)}
+.pill{display:inline-block;padding:2px 10px;border-radius:999px;border:1px solid var(--rule-2);font-family:var(--f-mono);font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.pill.on{border-color:var(--phos);color:var(--phos)}
+.pill.fx{border-color:var(--amber);color:var(--amber)}
+.pill.ps{border-color:var(--blue);color:var(--blue)}
+.badge{display:inline-block;padding:0 6px;border-radius:3px;font-family:var(--f-mono);font-size:.7rem;border:1px solid var(--rule-2);color:var(--muted);vertical-align:1px}
+.badge.am{border-color:var(--amber);color:var(--amber)}
+.badge.bad{border-color:var(--bad);color:var(--bad)}
+.cv{display:block;width:100%;border-radius:4px}
+
+/* ---------- lecteur ---------- */
+.now{display:flex;flex-wrap:wrap;align-items:flex-start;gap:8px 16px;margin-bottom:10px}
+.np{flex:1 1 300px;min-width:0}
+.np-k{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.np-t{font-family:var(--f-disp);font-weight:600;font-size:1.7rem;letter-spacing:.02em;line-height:1.1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.np-s{color:var(--muted);font-size:.86rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.clock{text-align:right}
+.clock .big{font-size:1.9rem;line-height:1;color:var(--fg)}
+.clock .clk-s{font-size:.78rem;color:var(--muted);margin-top:4px}
+#cvWave{cursor:pointer;touch-action:none;background:var(--scope)}
+.transport{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin-top:10px}
+.tb{display:flex;gap:6px}
+.tbtn{width:48px;height:42px;display:grid;place-items:center;border:1px solid var(--rule-2);border-radius:6px;background:var(--bay-2);color:var(--fg);cursor:pointer}
+.tbtn svg{width:20px;height:20px;fill:currentColor}
+.tbtn:hover{border-color:var(--amber);color:var(--amber)}
+.tbtn.act{background:var(--amber);border-color:var(--amber);color:var(--amber-ink)}
+.vol{display:flex;align-items:center;gap:8px;flex:1 1 220px;max-width:360px}
+.vol label{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.vol input{flex:1;accent-color:var(--amber)}
+.vol output{font-size:.8rem;color:var(--muted);min-width:64px;text-align:right}
+.sink{display:flex;align-items:center;gap:6px;flex:1 1 300px;max-width:440px;min-width:0}
+.sink>label{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.sink select{flex:1;min-width:0;font-size:.84rem}
+.wavebar{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:8px}
+.wavebar .btn{font-family:var(--f-mono);font-size:.76rem;letter-spacing:.04em;text-transform:uppercase}
+.wavebar .btn.clr:hover:not(:disabled){border-color:var(--bad);color:var(--bad)}
+.wavebar .sep{width:1px;align-self:stretch;background:var(--rule-2);margin:0 4px}
+.wavebar .iord{margin-left:auto;font-family:var(--f-mono);font-size:.78rem;color:var(--muted)}
+.wavebar .iord b{color:var(--amber);font-weight:500}
+.spd{display:flex;align-items:center;gap:8px;flex:1 1 260px;max-width:380px}
+.spd>label:first-child{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.spd input[type=range]{flex:1;accent-color:var(--phos)}
+.spd output{font-family:var(--f-mono);font-size:.95rem;min-width:46px;color:var(--phos);cursor:pointer}
+.spd output.x1{color:var(--muted)}
+.spd .ck{display:flex;align-items:center;gap:4px;font-size:.76rem;color:var(--muted);cursor:pointer;white-space:nowrap}
+.spd .ck input{accent-color:var(--amber);margin:0}
+.tbtn.rev.act{background:var(--violet);border-color:var(--violet)}
+.pill.rv{border-color:var(--violet);color:var(--violet)}
+.trk.pick{background:rgba(91,149,240,.10);box-shadow:inset 3px 0 var(--blue)}
+.trk.pick .t1{color:var(--blue)}
+.trk.flash{animation:flash 2.4s ease-out}
+@keyframes flash{0%,30%{background:rgba(134,224,162,.28)}100%{background:transparent}}
+.nextup{flex:1 1 100%;font-size:.8rem;color:var(--dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nextup b{color:var(--muted);font-weight:500}
+.keys{font-size:.74rem;color:var(--dim);margin-top:6px}
+.keys kbd{font-family:var(--f-mono);font-size:.7rem;border:1px solid var(--rule-2);border-radius:3px;padding:0 4px;color:var(--muted)}
+
+/* ---------- listes ---------- */
+.list{list-style:none;margin:0;padding:0;border:1px solid var(--rule);border-radius:6px;background:var(--scope);min-height:60px;overflow:auto}
+.list.dropin{outline:2px dashed var(--amber);outline-offset:-2px}
+#plList{max-height:520px}
+#trkList{max-height:600px}
+.pl,.trk{display:grid;align-items:center;gap:4px 8px;padding:6px 8px;border-bottom:1px solid var(--rule);cursor:pointer;user-select:none;position:relative}
+.pl:last-child,.trk:last-child{border-bottom:0}
+.pl:hover,.trk:hover{background:var(--bay-2)}
+.pl{grid-template-columns:14px minmax(0,1fr) auto}
+.pl.sel{background:rgba(232,184,74,.09);box-shadow:inset 3px 0 var(--amber)}
+.pl .nm{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pl.sel .nm{color:var(--amber)}
+.pl .meta{font-size:.72rem;color:var(--dim)}
+.pl .acts,.trk .acts{display:flex;gap:1px;opacity:.35}
+.pl:hover .acts,.trk:hover .acts{opacity:1}
+.pl{grid-template-columns:14px minmax(0,1fr)}
+.pl .acts{position:absolute;right:4px;top:50%;transform:translateY(-50%);background:var(--bay-2);border-radius:4px;opacity:0}
+@media (hover:none){.pl.sel .acts{opacity:1}}
+.pl input{width:100%;background:var(--bay-2);border:1px solid var(--amber);border-radius:3px;padding:1px 5px}
+.hd{color:var(--dim);cursor:grab;font-size:.9rem;text-align:center}
+.trk{grid-template-columns:14px 28px minmax(0,1fr) auto 64px 74px auto}
+.trk .no{font-family:var(--f-mono);font-size:.76rem;color:var(--dim);text-align:right}
+.trk .t1{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.trk .t2{font-size:.74rem;color:var(--dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.trk .io{font-family:var(--f-mono);font-size:.7rem;color:var(--amber);white-space:nowrap}
+.trk .du{font-family:var(--f-mono);font-size:.8rem;text-align:right}
+.trk .lu{font-family:var(--f-mono);font-size:.72rem;color:var(--dim);text-align:right;white-space:nowrap}
+.trk.cur{background:rgba(232,184,74,.08);box-shadow:inset 3px 0 var(--amber)}
+.trk.cur .t1{color:var(--amber);font-weight:600}
+.trk.playing .no{color:var(--phos)}
+.trk.missing .t1{color:var(--warn)}
+.trk.missing .t1::after{content:" · fichier à relier";font-size:.72rem;color:var(--warn)}
+.dragging{opacity:.4}
+.dropbefore{box-shadow:inset 0 2px var(--amber)!important}
+.dropafter{box-shadow:inset 0 -2px var(--amber)!important}
+.pl.dropin,.trk.dropin{background:rgba(232,184,74,.16)}
+.empty{color:var(--dim);font-size:.86rem;padding:18px 12px;text-align:center;margin:0}
+@media (max-width:640px){.trk{grid-template-columns:14px 24px minmax(0,1fr) 58px auto}.trk .io,.trk .lu{display:none}}
+.eq{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--phos);margin-right:6px;vertical-align:1px;box-shadow:0 0 6px var(--phos)}
+.trkhead{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline;margin:-4px 0 8px}
+.trkhead .nm{font-family:var(--f-disp);font-weight:600;font-size:1.25rem;color:var(--amber)}
+.trkhead .st{font-family:var(--f-mono);font-size:.76rem;color:var(--muted)}
+.banner{border:1px solid var(--warn);background:rgba(240,163,94,.07);border-radius:6px;padding:8px 10px;margin-bottom:8px;font-size:.84rem}
+.banner .btn{margin:4px 4px 0 0}
+
+/* ---------- paramètres ---------- */
+.field{margin:2px 0 12px}
+.field>label,.flabel{display:block;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.rangeline{display:flex;align-items:center;gap:10px}
+.rangeline input[type=range]{flex:1;accent-color:var(--amber)}
+.rangeline output{font-family:var(--f-mono);font-size:.95rem;min-width:52px;text-align:right;color:var(--amber)}
+.sw{display:flex;align-items:center;gap:8px;padding:5px 0;cursor:pointer;font-size:.92rem}
+.sw input{accent-color:var(--amber);width:16px;height:16px;margin:0}
+.sub{margin-left:24px}
+select{background:var(--bay-2);border:1px solid var(--rule-2);border-radius:5px;padding:3px 6px}
+.ninfo{font-family:var(--f-mono);font-size:.76rem;color:var(--muted);background:var(--scope);border:1px solid var(--rule);border-radius:5px;padding:6px 8px;margin-top:8px;line-height:1.55}
+
+/* ---------- IN / OUT ---------- */
+.iorow{display:grid;grid-template-columns:42px minmax(0,1fr) auto;gap:6px;align-items:center;margin-bottom:8px}
+.tag{font-family:var(--f-mono);font-weight:500;font-size:.78rem;text-align:center;border-radius:3px;padding:3px 0;background:var(--amber);color:var(--amber-ink)}
+.tc{width:100%;font-family:var(--f-mono);font-size:1rem;background:var(--scope);border:1px solid var(--rule-2);border-radius:5px;padding:4px 8px;color:var(--fg)}
+.tc:focus{outline:none;border-color:var(--amber)}
+.iobtns{display:flex;gap:4px}
+.iouse{display:flex;justify-content:space-between;font-size:.84rem;color:var(--muted);border-top:1px solid var(--rule);padding-top:8px;margin-top:4px}
+.iouse b{font-family:var(--f-mono);font-weight:500;color:var(--fg)}
+#ioTrack{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.78rem;color:var(--dim)}
+
+/* ---------- notes, toasts, modale ---------- */
+.notes{color:var(--muted);font-size:.86rem}
+.notes p{margin:0 0 8px}
+.notes b{color:var(--fg)}
+.sig{font-size:.74rem;color:var(--dim);margin:10px 0 0}
+#toasts{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);display:flex;flex-direction:column;gap:6px;z-index:60;width:min(560px,calc(100% - 24px))}
+.toast{background:#1b2025;border:1px solid var(--rule-2);border-left:3px solid var(--phos);border-radius:6px;padding:8px 12px;font-size:.86rem;display:flex;gap:10px;align-items:center;box-shadow:0 6px 20px rgba(0,0,0,.5)}
+.toast.warn{border-left-color:var(--warn)}
+.toast.bad{border-left-color:var(--bad)}
+.toast span{flex:1}
+.modal{position:fixed;inset:0;background:rgba(8,10,12,.78);display:grid;place-items:center;z-index:70;padding:16px}
+.mbox{background:var(--bay);border:1px solid var(--rule-2);border-radius:8px;padding:16px;width:min(620px,100%);max-height:90vh;overflow:auto}
+.mbox h3{margin:0 0 8px;font-family:var(--f-disp);font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--amber)}
+.mbtns{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
+.xmlta{width:100%;height:46vh;background:var(--scope);color:var(--fg);border:1px solid var(--rule-2);border-radius:5px;font-family:var(--f-mono);font-size:.72rem;padding:8px}
+body.filedrag .list{outline:2px dashed var(--rule-2);outline-offset:-2px}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand">
+    <h1>Music Player <span>JC Fouché 2026</span> - <a class="site" href="http://www.lehubnumerique.com" target="_blank" rel="noopener">www.lehubnumerique.com</a></h1>
+    <p class="sub">Lecteur de playlists audio : fondus enchaînés, points IN/OUT, normalisation de la sonie, import et export au format XML d'Apple Music</p>
+  </div>
+  <div class="hinfo"><span id="anInfo"></span><span id="stInfo"></span><span class="mono">v<span id="ver"></span></span>
+    <button class="btn fs" id="bFs" type="button" title="Afficher le lecteur seul, en plein écran (touche F) · Échap pour sortir"><svg viewBox="0 0 24 24" id="fsIco"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg><span id="fsLbl">Plein écran</span></button></div>
+</header>
+
+<main class="app">
+  <div class="row1">
+    <section class="bay" aria-labelledby="hPlay">
+      <div class="bay-head"><h2 id="hPlay">Lecture</h2><span class="pill" id="pill">Arrêté</span></div>
+      <div class="now">
+        <div class="np"><div class="np-k">Morceau chargé</div><div class="np-t" id="npTitle">Aucun morceau</div><div class="np-s" id="npSub">Choisissez une playlist, puis cliquez sur un morceau.</div></div>
+        <div class="clock"><div class="big mono" id="clkPos">0:00.00</div><div class="clk-s mono" id="clkRem">&nbsp;</div></div>
+      </div>
+      <canvas class="cv" id="cvWave" aria-label="Forme d'onde du morceau, pistes gauche et droite." title="Double-clic : placer la tête de lecture · glisser les drapeaux IN / OUT pour les déplacer"></canvas>
+      <div class="wavebar">
+        <button class="btn" id="wGoIn" type="button" title="Placer la tête de lecture sur le point IN (début du morceau s'il n'y en a pas)">Goto IN</button>
+        <button class="btn" id="wGoOut" type="button" title="Mettre en pause et placer la tête de lecture sur le point OUT (fin du morceau s'il n'y en a pas)">Goto OUT</button>
+        <span class="sep"></span>
+        <button class="btn clr" id="wClr" type="button" title="Effacer les points IN et OUT du morceau chargé">Clear IN/OUT</button>
+        <button class="btn clr" id="wClrAll" type="button" title="Effacer les points IN et OUT de tous les morceaux de la playlist">Clear all IN/OUT</button>
+        <span class="iord" id="wIO"></span>
+      </div>
+      <div class="transport">
+        <div class="tb">
+          <button class="tbtn" id="bPrev" type="button" title="Morceau précédent (←)" aria-label="Morceau précédent"><svg viewBox="0 0 24 24"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg></button>
+          <button class="tbtn rev" id="bRev" type="button" title="Lecture inversée, de la position actuelle vers le début (touche R)" aria-label="Lecture inversée"><svg viewBox="0 0 24 24"><path d="M17 4v16L4 12z"/></svg></button>
+          <button class="tbtn" id="bPlay" type="button" title="Lecture (espace)" aria-label="Lecture"><svg viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></svg></button>
+          <button class="tbtn" id="bPause" type="button" title="Pause (espace)" aria-label="Pause"><svg viewBox="0 0 24 24"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg></button>
+          <button class="tbtn" id="bNext" type="button" title="Morceau suivant (→)" aria-label="Morceau suivant"><svg viewBox="0 0 24 24"><path d="M16 5h2v14h-2zM4 5v14l11-7z"/></svg></button>
+        </div>
+        <div class="spd"><label for="rate">Vitesse</label><input type="range" id="rate" min="0" max="6" step="1" list="rateTicks" aria-label="Vitesse de lecture"><datalist id="rateTicks"><option value="0"></option><option value="2"></option><option value="4"></option><option value="6"></option></datalist><output id="rateOut" title="Double-clic : revenir à ×1">×1</output><label class="ck" title="Garder la hauteur des sons quand la vitesse change (sans effet en lecture inversée)"><input type="checkbox" id="pitch"> hauteur fixe</label></div>
+        <div class="vol"><label for="vol">Volume</label><input type="range" id="vol" min="0" max="100" step="1"><output id="volOut" class="mono"></output></div>
+        <div class="sink"><label for="sink">Sortie</label><select id="sink" aria-label="Périphérique de sortie audio"><option value="">Sortie par défaut du système</option></select><button class="btn" id="sinkNames" type="button" title="Chrome demande l'accès au micro pour donner le nom des sorties audio ; le micro n'est ni écouté ni enregistré.">Afficher les sorties…</button></div>
+        <div class="nextup" id="nextUp"></div>
+      </div>
+      <div class="keys">Clavier : <kbd>espace</kbd> lecture / pause · <kbd>←</kbd> <kbd>→</kbd> morceau précédent / suivant · <kbd>R</kbd> lecture inversée · <kbd>F</kbd> plein écran · <kbd>I</kbd> <kbd>O</kbd> poser IN / OUT à la position de lecture</div>
+    </section>
+
+    <section class="bay" aria-labelledby="hLvl">
+      <div class="bay-head"><h2 id="hLvl">Niveaux audio</h2><span class="cap" style="margin:0">dBFS · avant le volume</span></div>
+      <canvas class="cv" id="cvMeter"></canvas>
+      <canvas class="cv" id="cvHist" style="margin-top:8px"></canvas>
+      <p class="cap">Barre claire : crête · barre pleine : RMS · trait blanc : crête maintenue 1,5 s · historique des crêtes sur les dernières secondes.</p>
+    </section>
+  </div>
+
+  <div class="row2">
+    <section class="bay" aria-labelledby="hPl">
+      <div class="bay-head"><h2 id="hPl">Playlists</h2></div>
+      <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px">
+        <button class="btn" id="bNewPl" type="button">+ Nouvelle</button>
+        <button class="btn" id="bImpXml" type="button" title="Importer un fichier .xml exporté par Apple Music">Importer .xml</button>
+        <button class="btn" id="bExpAll" type="button" title="Toutes les playlists dans un seul fichier .xml">Exporter tout</button>
+      </div>
+      <ul class="list" id="plList" aria-label="Playlists"></ul>
+      <p class="cap">Glissez ici un .xml Apple Music, des fichiers audio ou un morceau de la liste pour le copier dans une playlist. Double-clic pour renommer, glisser pour réordonner.</p>
+    </section>
+
+    <section class="bay" aria-labelledby="hTrk" id="bayTrk">
+      <div class="bay-head"><h2 id="hTrk">Morceaux</h2>
+        <button class="btn" id="bAdd" type="button" title="Ajouter des fichiers .mp3 ou .m4a">+ Morceaux</button>
+        <button class="btn" id="bExpCur" type="button">Exporter .xml</button>
+      </div>
+      <div class="trkhead"><span class="nm" id="trkName"></span><span class="st" id="trkStats"></span></div>
+      <div class="banner" id="missBanner" hidden></div>
+      <ul class="list" id="trkList" aria-label="Morceaux de la playlist"></ul>
+      <p class="cap">À l'arrêt : clic pour charger, double-clic pour lire · pendant la lecture : clic pour sélectionner sans interrompre, double-clic pour enchaîner avec un fondu · ⠿ glisser pour changer l'ordre · ⇄ remplacer le fichier · ✕ retirer.</p>
+    </section>
+
+    <div class="side">
+      <section class="bay" aria-labelledby="hSet" id="baySet">
+        <div class="bay-head"><h2 id="hSet">Paramètres de lecture</h2></div>
+        <div class="field"><label for="fade">Fondu enchaîné</label>
+          <div class="rangeline"><input type="range" id="fade" min="0" max="10" step="0.5"><output id="fadeOut">3,0 s</output></div></div>
+        <label class="sw"><input type="checkbox" id="repOne"> Boucle sur le morceau</label>
+        <label class="sw"><input type="checkbox" id="repAll"> Boucle sur la playlist</label>
+        <label class="sw"><input type="checkbox" id="norm"> Normalisation du niveau</label>
+        <div class="field sub" style="margin-top:4px"><span class="flabel">Niveau cible</span>
+          <select id="target" aria-label="Niveau cible de la normalisation">
+            <option value="-14">−14 LUFS · plateformes web</option>
+            <option value="-16">−16 LUFS · recommandé</option>
+            <option value="-18">−18 LUFS · dynamique préservée</option>
+            <option value="-23">−23 LUFS · EBU R128 diffusion</option>
+          </select></div>
+        <label class="sw sub"><input type="checkbox" id="peakProt"> Garder les crêtes sous −1 dBFS</label>
+        <div class="ninfo" id="normInfo">—</div>
+      </section>
+
+      <section class="bay" aria-labelledby="hIO" id="bayIO">
+        <div class="bay-head"><h2 id="hIO">Points IN / OUT</h2><span id="ioTrack">aucun morceau chargé</span></div>
+        <div class="iorow"><span class="tag">IN</span><input class="tc" id="inTc" placeholder="début" aria-label="Timecode IN" spellcheck="false">
+          <div class="iobtns"><button class="btn" id="inSet" type="button" title="Poser IN à la position de lecture (touche I)">◉ pos.</button><button class="ib" id="inGo" type="button" title="Aller au point IN">▶</button><button class="ib del" id="inClr" type="button" title="Effacer IN">✕</button></div></div>
+        <div class="iorow"><span class="tag">OUT</span><input class="tc" id="outTc" placeholder="fin" aria-label="Timecode OUT" spellcheck="false">
+          <div class="iobtns"><button class="btn" id="outSet" type="button" title="Poser OUT à la position de lecture (touche O)">◉ pos.</button><button class="ib" id="outGo" type="button" title="Écouter les 3 secondes avant OUT">▶</button><button class="ib del" id="outClr" type="button" title="Effacer OUT">✕</button></div></div>
+        <div class="iouse"><span>Durée utile</span><b id="ioUse">—</b></div>
+        <p class="cap">Format m:ss.cc (ex. 1:23.50) ou secondes. Les repères se déplacent aussi sur la forme d'onde. Ils sont enregistrés pour chaque morceau de la playlist et exportés dans le .xml (clés Apple « Start Time » et « Stop Time »).</p>
+      </section>
+    </div>
+  </div>
+
+  <section class="bay notes">
+    <div class="bay-head"><h2>Mode d'emploi</h2></div>
+    <p><b>Où sont les fichiers ?</b> Les morceaux importés sont conservés dans la mémoire de ce navigateur, sur cet ordinateur (IndexedDB) : rien n'est envoyé sur un serveur. Ils restent disponibles à la prochaine ouverture de la page, dans le même navigateur.</p>
+    <p><b>Import Apple Music.</b> Un .xml exporté par Apple Music contient les titres, l'ordre et les chemins des fichiers (file:///Users/…), mais une page web n'a pas le droit de lire ces chemins. Après l'import, reliez les fichiers une fois : bouton « Choisir le dossier » ou glisser-déposer du dossier sur la liste. La correspondance se fait par nom de fichier, sous-dossiers compris.</p>
+    <p><b>Fondu enchaîné.</b> Appliqué en fin de morceau (ou au point OUT), sur « suivant » et « précédent » pendant la lecture, et au double-clic sur un autre morceau pendant la lecture. <b>Lecture inversée</b> : le morceau est décodé en entier puis lu à l'envers depuis la position actuelle jusqu'au point IN ; ▶ repart dans le sens normal depuis l'endroit atteint. <b>Vitesse</b> : de ×1 à ×3, hauteur conservée ou non ; les durées de fondu restent en secondes réelles. Courbes à puissance constante : le niveau perçu ne creuse pas au milieu du fondu.</p>
+    <p><b>Normalisation.</b> Chaque fichier est analysé en arrière-plan selon la méthode ITU-R BS.1770 (pondération K, double porte de mesure, estimation à 16 kHz) ; le gain appliqué amène la sonie intégrée au niveau cible. Pour un morceau pas encore analysé, la valeur Sound Check du .xml Apple sert de repli.</p>
+    <p class="sig">Music Player JC Fouché 2026 - www.lehubnumerique.com</p>
+  </section>
+</main>
+
+<input type="file" id="inAdd" accept="audio/*,.mp3,.m4a,.aac,.wav,.aif,.aiff,.flac,.ogg" multiple hidden>
+<input type="file" id="inXml" accept=".xml,text/xml,application/xml" multiple hidden>
+<input type="file" id="inLink" accept="audio/*,.mp3,.m4a" multiple hidden>
+<input type="file" id="inDir" webkitdirectory multiple hidden>
+<input type="file" id="inRep" accept="audio/*,.mp3,.m4a,.aac,.wav,.aif,.aiff,.flac,.ogg" hidden>
+<div id="toasts" aria-live="polite"></div>
+<div class="modal" id="modal" hidden><div class="mbox" role="dialog" aria-modal="true" aria-labelledby="mTitle"><h3 id="mTitle"></h3><div id="mBody"></div><div class="mbtns" id="mBtns"></div></div></div>
+
+<script>
+'use strict';
+/* =====================================================================
+   Music Player — JC Fouché 2026 — www.lehubnumerique.com
+   ===================================================================== */
+const VERSION = '1.5';
+const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const C = { scope: '#080a0c', fg: '#e6e9ec', muted: '#8e979f', dim: '#5f6870', rule: '#1e2328', rule2: '#333a42', amber: '#e8b84a', ink: '#0c0e10', phos: '#86e0a2', bad: '#ef6b6b', warn: '#f0a35e', blue: '#5b95f0' };
+const MONO = "'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace";
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+const nfc = s => String(s ?? '').normalize('NFC');
+const keyName = s => nfc(s).toLowerCase();
+const stripExt = s => String(s || '').replace(/\.[^./]+$/, '');
+const AUDIO_RE = /\.(mp3|m4a|aac|mp4|m4b|wav|aif|aiff|flac|ogg|oga|opus|webm)$/i;
+const isAudio = f => AUDIO_RE.test(f.name) || (!!f.type && f.type.startsWith('audio/'));
+const isXml = f => /\.xml$/i.test(f.name) || f.type === 'text/xml' || f.type === 'application/xml';
+const byName = (a, b) => a.name.localeCompare(b.name, 'fr', { numeric: true });
+const NF = {};
+function fmt(n, d = 1) {
+  if (n == null || !Number.isFinite(n)) return '—';
+  return (NF[d] || (NF[d] = new Intl.NumberFormat('fr-FR', { minimumFractionDigits: d, maximumFractionDigits: d }))).format(n).replace(/^[-\u2212]/, '−');
+}
+const dB = (v, d = 1, sign = false) => (v == null || !Number.isFinite(v) || v < -119) ? '−∞' : ((sign && v > 0.05 ? '+' : '') + fmt(v, d));
+const bytes = b => !Number.isFinite(b) ? '—' : b >= 1073741824 ? fmt(b / 1073741824, 2) + ' Go' : b >= 1048576 ? fmt(b / 1048576, 1) + ' Mo' : fmt(b / 1024, 0) + ' ko';
+function tc(sec, cs = true) {
+  if (sec == null || !Number.isFinite(sec)) return '—';
+  const c = Math.round(Math.max(0, sec) * 100), h = Math.floor(c / 360000), m = Math.floor(c / 6000) % 60, s = Math.floor(c / 100) % 60, cc = c % 100;
+  const mm = h ? h + ':' + String(m).padStart(2, '0') : String(m);
+  return mm + ':' + String(s).padStart(2, '0') + (cs ? '.' + String(cc).padStart(2, '0') : '');
+}
+function parseTc(str) {
+  str = String(str || '').trim().replace(',', '.');
+  if (!str) return null;
+  const parts = str.split(':').map(Number);
+  if (parts.some(x => !Number.isFinite(x) || x < 0)) return NaN;
+  return parts.reduce((a, p) => a * 60 + p, 0);
+}
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+
+/* ---------- stockage (IndexedDB, repli en mémoire) ---------- */
+const DB = {
+  db: null, mem: { files: new Map(), kv: new Map() },
+  async open() {
+    try {
+      this.db = await new Promise((res, rej) => {
+        const r = indexedDB.open('labo-playlist-player', 1);
+        r.onupgradeneeded = () => { const d = r.result; if (!d.objectStoreNames.contains('files')) d.createObjectStore('files', { keyPath: 'id' }); if (!d.objectStoreNames.contains('kv')) d.createObjectStore('kv'); };
+        r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); r.onblocked = () => rej(new Error('blocked'));
+      });
+    } catch { this.db = null; }
+    return !!this.db;
+  },
+  req(store, mode, fn) {
+    return new Promise((res, rej) => {
+      const t = this.db.transaction(store, mode), r = fn(t.objectStore(store));
+      t.oncomplete = () => res(r ? r.result : undefined); t.onerror = () => rej(t.error); t.onabort = () => rej(t.error || new Error('abort'));
+    });
+  },
+  get(store, k) { return this.db ? this.req(store, 'readonly', s => s.get(k)) : Promise.resolve(this.mem[store].get(k)); },
+  put(store, v, k) { if (!this.db) { this.mem[store].set(k ?? v.id, v); return Promise.resolve(); } return this.req(store, 'readwrite', s => k === undefined ? s.put(v) : s.put(v, k)); },
+  del(store, k) { if (!this.db) { this.mem[store].delete(k); return Promise.resolve(); } return this.req(store, 'readwrite', s => s.delete(k)); },
+  all(store) { return this.db ? this.req(store, 'readonly', s => s.getAll()) : Promise.resolve([...this.mem[store].values()]); },
+};
+
+/* ---------- état ---------- */
+const DEF = { fade: 3, repeatOne: false, repeatAll: true, normalize: true, target: -16, peakProtect: true, volume: 80, rate: 1, keepPitch: true };
+const RATES = [1, 1.25, 1.5, 1.75, 2, 2.5, 3];
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+let ST = { playlists: [], view: null, last: null, settings: { ...DEF } };
+const FILES = new Map();   // id -> { id, name, size, type, an }
+let saveT;
+function save() {
+  clearTimeout(saveT);
+  saveT = setTimeout(() => DB.put('kv', JSON.parse(JSON.stringify(ST)), 'state').catch(e => toast('Enregistrement impossible : ' + e.message, 'bad')), 250);
+}
+const plById = id => ST.playlists.find(p => p.id === id) || null;
+const viewPl = () => plById(ST.view) || ST.playlists[0] || null;
+function findEntry(id) { for (const p of ST.playlists) { const e = p.items.find(x => x.id === id); if (e) return [p, e]; } return [null, null]; }
+const hasFile = e => !!(e && e.fileId && FILES.has(e.fileId));
+const anOf = e => FILES.get(e?.fileId)?.an || null;
+const durOf = e => (e.durMs || anOf(e)?.durMs || 0) / 1000;
+const inOf = e => (e.inMs || 0) / 1000;
+const outOf = (e, dur) => { const d = (dur && Number.isFinite(dur)) ? dur : durOf(e); return e.outMs ? (d ? Math.min(e.outMs / 1000, d) : e.outMs / 1000) : d; };
+const usefulOf = (e, dur) => Math.max(0, outOf(e, dur) - inOf(e));
+const plTotal = p => p.items.reduce((s, e) => s + usefulOf(e), 0);
+const cloneEntry = e => ({ ...JSON.parse(JSON.stringify(e)), id: uid() });
+function uniqueName(n) {
+  n = (n || 'Playlist').trim() || 'Playlist';
+  if (!ST.playlists.some(p => p.name === n)) return n;
+  let i = 2; while (ST.playlists.some(p => p.name === `${n} (${i})`)) i++;
+  return `${n} (${i})`;
+}
+
+/* ---------- normalisation ---------- */
+function normDb(e) {
+  const an = anOf(e), s = ST.settings;
+  let g = null, src = '';
+  if (an && an.lufs != null && Number.isFinite(an.lufs)) { g = s.target - an.lufs; if (s.peakProtect && an.peak != null) g = Math.min(g, -1 - an.peak); src = 'mesure'; }
+  else if (e?.appleNorm > 0) { g = -10 * Math.log10(e.appleNorm / 1000) + (s.target + 16); src = 'Sound Check'; }
+  if (g == null) return { g: 0, src: 'aucune', known: false };
+  return { g: clamp(g, -24, 12), src, known: true };
+}
+const normLin = e => ST.settings.normalize ? 10 ** (normDb(e).g / 20) : 1;
+
+/* ---------- moteur audio : deux platines, fondus enchaînés ---------- */
+function makeDeck(i) {
+  const a = new Audio(); a.preload = 'auto';
+  const d = { i, a, url: null, entry: null, src: null, norm: null, fade: null, timer: null };
+  a.addEventListener('timeupdate', check); a.addEventListener('ended', check);
+  a.addEventListener('error', () => { if (A.active === d && d.entry && A.playing) toast('Erreur de lecture : ' + d.entry.title, 'bad'); });
+  return d;
+}
+const A = { ctx: null, bus: null, vol: null, an: [], decks: [], active: null, playing: false, ending: false, plId: null, entryId: null, lastIdx: 0, seq: 0, xfadeUntil: 0 };
+A.decks = [makeDeck(0), makeDeck(1)];
+function ensureCtx() {
+  if (A.ctx) { if (A.ctx.state === 'suspended') A.ctx.resume().catch(() => {}); return; }
+  const Ctx = window.AudioContext || window.webkitAudioContext;
+  const ctx = A.ctx = new Ctx();
+  A.bus = ctx.createGain(); A.bus.channelCount = 2; A.bus.channelCountMode = 'explicit'; A.bus.channelInterpretation = 'speakers';
+  A.vol = ctx.createGain();
+  const sp = ctx.createChannelSplitter(2);
+  A.an = [0, 1].map(() => { const n = ctx.createAnalyser(); n.fftSize = 2048; n.smoothingTimeConstant = 0; return n; });
+  A.bus.connect(sp); sp.connect(A.an[0], 0); sp.connect(A.an[1], 1);
+  A.bus.connect(A.vol); A.vol.connect(ctx.destination);
+  for (const d of A.decks) {
+    d.src = ctx.createMediaElementSource(d.a); d.norm = ctx.createGain(); d.fade = ctx.createGain();
+    d.fade.gain.value = d === A.active ? 1 : 0; d.norm.gain.value = d.entry ? normLin(d.entry) : 1;
+    d.src.connect(d.norm); d.norm.connect(d.fade); d.fade.connect(A.bus);
+  }
+  applyVolume(); applySink();
+}
+function setGain(node, v) { if (!A.ctx || !node) return; const t = A.ctx.currentTime; node.gain.cancelScheduledValues(t); node.gain.setValueAtTime(v, t); }
+/* fondu à puissance constante (sinus / cosinus) depuis la valeur courante */
+function fadeGain(node, to, dur) {
+  if (!A.ctx || !node) return;
+  const t = A.ctx.currentTime, from = node.gain.value;
+  node.gain.cancelScheduledValues(t); node.gain.setValueAtTime(from, t);
+  if (dur <= 0.005) { node.gain.setValueAtTime(to, t); return; }
+  const N = 32;
+  for (let i = 1; i <= N; i++) {
+    const x = i / N, y = to > from ? from + (to - from) * Math.sin(x * Math.PI / 2) : to + (from - to) * Math.cos(x * Math.PI / 2);
+    node.gain.linearRampToValueAtTime(y, t + dur * x);
+  }
+}
+/* position de lecture d'une platine, dans les deux sens */
+function deckTime(d) {
+  if (d.rev && A.ctx) return Math.max(0, d.rev.startPos - (A.ctx.currentTime - d.rev.startCtx) * d.rev.rate);
+  return d.a.currentTime || 0;
+}
+function stopReverse(d) {
+  if (!d.rev) return;
+  const t = deckTime(d), s = d.rev.src; d.rev = null;
+  try { s.onended = null; s.stop(); } catch {}
+  try { s.disconnect(); } catch {}
+  try { d.a.currentTime = t; } catch {}
+}
+function halt(d) { stopReverse(d); d.a.pause(); }
+function hardStop(d) { clearTimeout(d.timer); halt(d); setGain(d.fade, 0); }
+function quickStop(d) { clearTimeout(d.timer); fadeGain(d.fade, 0, 0.04); d.timer = setTimeout(() => { if (A.active !== d) halt(d); }, 70); }
+const rate = () => ST.settings.rate || 1;
+function setPitch(a) { const k = !!ST.settings.keepPitch; a.preservesPitch = k; a.mozPreservesPitch = k; a.webkitPreservesPitch = k; }
+function applyRate() {
+  const r = rate();
+  for (const d of A.decks) {
+    d.a.defaultPlaybackRate = r; d.a.playbackRate = r; setPitch(d.a);
+    if (d.rev && A.ctx) { const now = A.ctx.currentTime; d.rev.startPos = deckTime(d); d.rev.startCtx = now; d.rev.rate = r; d.rev.src.playbackRate.setValueAtTime(r, now); }
+  }
+  const o = $('#rateOut'); o.textContent = '×' + fmt(r, 2).replace(/,?0+$/, ''); o.classList.toggle('x1', r === 1);
+  $('#rate').value = Math.max(0, RATES.indexOf(r));
+  $('#pitch').checked = !!ST.settings.keepPitch;
+}
+/* lecture inversée : le fichier est décodé, ses échantillons retournés, puis lu par un AudioBufferSourceNode */
+const REV = { id: null, buf: null, p: null };
+async function getReversed(fileId) {
+  if (REV.id === fileId && REV.buf) return REV.buf;
+  if (REV.id === fileId && REV.p) return REV.p;
+  REV.id = fileId; REV.buf = null;
+  REV.p = (async () => {
+    const rec = await DB.get('files', fileId); if (!rec?.blob) throw new Error('fichier introuvable');
+    const buf = await decodeWith(A.ctx, await rec.blob.arrayBuffer());
+    for (let c = 0; c < buf.numberOfChannels; c++) buf.getChannelData(c).reverse();
+    return buf;
+  })();
+  try { const b = await REV.p; if (REV.id === fileId) REV.buf = b; return b; }
+  catch (err) { if (REV.id === fileId) REV.id = null; throw err; }
+  finally { REV.p = null; }
+}
+function startRevSource(d, buf, p) {
+  const r = rate(), src = A.ctx.createBufferSource();
+  src.buffer = buf; src.playbackRate.value = r; src.connect(d.norm);
+  p = clamp(p, 0, buf.duration);
+  src.start(0, buf.duration - p);
+  d.rev = { src, startCtx: A.ctx.currentTime, startPos: p, rate: r };
+  src.onended = () => { if (d.rev && d.rev.src === src) revEnd(d); };
+}
+function revEnd(d) {
+  stopReverse(d);
+  if (A.active !== d) return;
+  if (d.entry) d.a.currentTime = inOf(d.entry);
+  A.playing = false; A.ending = false;
+  renderState();
+}
+async function playReverse() {
+  ensureCtx(); try { await A.ctx.resume(); } catch {}
+  const d = A.active, e = d?.entry;
+  if (!e) { toast('Chargez d\'abord un morceau.', 'warn'); return; }
+  if (d.rev && A.playing) return;
+  const my = ++A.seq;
+  for (const x of A.decks) if (x !== d) hardStop(x);
+  const fromEnd = deckTime(d) <= inOf(e) + 0.05;
+  if (REV.id !== e.fileId || !REV.buf) toast('Préparation de la lecture inversée…');
+  let buf;
+  try { buf = await getReversed(e.fileId); }
+  catch { toast('Lecture inversée impossible pour ce fichier.', 'bad'); return; }
+  if (my !== A.seq || A.active !== d) return;
+  if (!d.a.paused) { fadeGain(d.fade, 0, 0.04); await sleep(50); if (my !== A.seq) return; }
+  stopReverse(d); d.a.pause();
+  const p = fromEnd ? outOf(e, curDur()) : deckTime(d);
+  setGain(d.fade, 0); fadeGain(d.fade, 1, 0.06);
+  startRevSource(d, buf, p);
+  A.playing = true; A.ending = false; A.xfadeUntil = 0; A.pickId = null;
+  renderState();
+}
+function applyVolume() {
+  const v = ST.settings.volume / 100, lin = v * v;
+  if (A.vol) A.vol.gain.setTargetAtTime(lin, A.ctx.currentTime, 0.03);
+  $('#volOut').textContent = lin <= 0 ? '−∞ dB' : dB(20 * Math.log10(lin)) + ' dB';
+}
+function applyNorm() {
+  if (!A.ctx) return;
+  for (const d of A.decks) if (d.entry && d.norm) d.norm.gain.setTargetAtTime(normLin(d.entry), A.ctx.currentTime, 0.08);
+}
+function waitFor(el, ev, ms = 15000) {
+  return new Promise((res, rej) => {
+    const ok = () => { clean(); res(); }, ko = () => { clean(); rej(el.error || new Error('chargement')); };
+    const to = setTimeout(() => { clean(); rej(new Error('délai dépassé')); }, ms);
+    function clean() { clearTimeout(to); el.removeEventListener(ev, ok); el.removeEventListener('error', ko); }
+    el.addEventListener(ev, ok); el.addEventListener('error', ko);
+  });
+}
+async function loadDeck(d, e) {
+  hardStop(d);
+  const rec = await DB.get('files', e.fileId);
+  if (!rec?.blob) throw new Error('fichier introuvable');
+  if (d.url) URL.revokeObjectURL(d.url);
+  d.url = URL.createObjectURL(rec.blob); d.entry = e;
+  d.a.defaultPlaybackRate = rate(); setPitch(d.a);
+  const p = waitFor(d.a, 'loadedmetadata'); d.a.src = d.url; d.a.load(); await p;
+  d.a.playbackRate = rate();
+  if (Number.isFinite(d.a.duration) && Math.abs((e.durMs || 0) - d.a.duration * 1000) > 1500 && !e.durMs) { e.durMs = Math.round(d.a.duration * 1000); save(); }
+  const t = inOf(e);
+  if (t > 0) { const s = waitFor(d.a, 'seeked', 8000); d.a.currentTime = t; await s.catch(() => {}); }
+  if (A.ctx) { const tt = A.ctx.currentTime; d.norm.gain.cancelScheduledValues(tt); d.norm.gain.setValueAtTime(normLin(e), tt); }
+}
+/* aller à un morceau : chargement sur la platine libre, puis fondu enchaîné si la lecture est en cours */
+async function goTo(pl, e, { play = A.playing, fade = 0, auto = false, depth = 0 } = {}) {
+  const my = ++A.seq;
+  if (play) ensureCtx();
+  if (!hasFile(e)) {
+    toast(`Fichier à relier : ${e.fileName || e.title}`, 'warn');
+    if (auto) return skipFrom(pl, e, depth);
+    return false;
+  }
+  const old = A.active, d = old === A.decks[0] ? A.decks[1] : A.decks[0];
+  try { await loadDeck(d, e); }
+  catch (err) {
+    if (my !== A.seq) return false;
+    toast(`Lecture impossible : ${e.title} (${err.message || 'format non pris en charge par ce navigateur'})`, 'bad');
+    A.ending = false;
+    if (auto) return skipFrom(pl, e, depth);
+    return false;
+  }
+  if (my !== A.seq) { hardStop(d); return false; }
+  A.active = d; A.plId = pl.id; A.entryId = e.id; A.lastIdx = pl.items.indexOf(e); A.ending = false; A.pickId = null;
+  ST.last = { plId: pl.id, entryId: e.id }; save();
+  const wasPlaying = !!old && (!old.a.paused || !!old.rev) && A.playing;
+  if (play) {
+    try { await A.ctx.resume(); } catch {}
+    let f = wasPlaying ? Math.max(0, fade) : 0;
+    if (f > 0.01) {
+      const u = usefulOf(e, d.a.duration) / rate(); if (u > 0) f = Math.min(f, u / 2);
+      const remOld = Math.max(0.05, (old.rev ? deckTime(old) - inOf(old.entry) : outOf(old.entry, old.a.duration) - old.a.currentTime) / rate());
+      const fo = Math.min(f, remOld);
+      setGain(d.fade, 0); fadeGain(d.fade, 1, f);
+      clearTimeout(old.timer); fadeGain(old.fade, 0, fo);
+      old.timer = setTimeout(() => { if (A.active !== old) halt(old); }, fo * 1000 + 150);
+      A.xfadeUntil = performance.now() + f * 1000;
+    } else {
+      if (old && old !== d) quickStop(old);
+      setGain(d.fade, 1); A.xfadeUntil = 0;
+    }
+    try { await d.a.play(); }
+    catch (err) { toast('Le navigateur a bloqué la lecture : cliquez sur ▶', 'warn'); A.playing = false; renderState(); return false; }
+    A.playing = true;
+  } else {
+    if (old && old !== d) hardStop(old);
+    setGain(d.fade, 1); A.playing = false;
+  }
+  renderState();
+  return true;
+}
+function skipFrom(pl, e, depth = 0) {
+  const n = pl.items.length;
+  if (depth >= n) { stopAtEnd(); return false; }
+  let i = pl.items.indexOf(e); if (i < 0) i = A.lastIdx - 1;
+  for (let k = 1; k <= n; k++) {
+    let j = i + k;
+    if (j >= n) { if (!ST.settings.repeatAll) break; j %= n; }
+    const x = pl.items[j];
+    if (hasFile(x)) return goTo(pl, x, { play: true, fade: ST.settings.fade, auto: true, depth: depth + 1 });
+  }
+  stopAtEnd(); return false;
+}
+function neighbor(dir) {
+  const pl = plById(A.plId) || viewPl();
+  if (!pl || !pl.items.length) return null;
+  const n = pl.items.length;
+  let i = pl.items.findIndex(x => x.id === A.entryId);
+  let j = i < 0 ? (dir > 0 ? A.lastIdx : A.lastIdx - 1) : i + dir;
+  for (let k = 0; k < n; k++) {
+    if (j >= n || j < 0) { if (!ST.settings.repeatAll) return null; j = (j % n + n) % n; }
+    if (hasFile(pl.items[j])) return [pl, pl.items[j]];
+    j += dir;
+  }
+  return null;
+}
+function autoNext() {
+  const pl = plById(A.plId), e = A.active?.entry;
+  if (!pl || !e) return null;
+  if (ST.settings.repeatOne && pl.items.includes(e)) return [pl, e];
+  return neighbor(1);
+}
+async function play() {
+  ensureCtx(); try { await A.ctx.resume(); } catch {}
+  const d = A.active;
+  if (!d || !d.entry) {
+    const pl = viewPl(), e = pl?.items.find(hasFile);
+    if (!e) { toast('Aucun morceau lisible dans cette playlist : ajoutez ou reliez des fichiers.', 'warn'); return; }
+    return goTo(pl, e, { play: true });
+  }
+  if (A.playing && !d.rev) return;
+  ++A.seq;
+  const e = d.entry;
+  if (d.rev) { fadeGain(d.fade, 0, 0.04); await sleep(50); stopReverse(d); }
+  if (d.a.currentTime >= outOf(e, d.a.duration) - 0.05 || d.a.ended) d.a.currentTime = inOf(e);
+  for (const x of A.decks) if (x !== d) hardStop(x);
+  d.a.playbackRate = rate();
+  clearTimeout(d.timer); setGain(d.fade, 0); fadeGain(d.fade, 1, 0.06);
+  try { await d.a.play(); } catch { toast('Le navigateur a bloqué la lecture : cliquez à nouveau sur ▶', 'warn'); return; }
+  A.playing = true; A.ending = false; A.xfadeUntil = 0;
+  renderState();
+}
+function pause() {
+  if (!A.playing) return;
+  ++A.seq; A.playing = false; A.ending = false; A.xfadeUntil = 0;
+  const d = A.active;
+  for (const x of A.decks) if (x !== d) hardStop(x);
+  if (d) { clearTimeout(d.timer); fadeGain(d.fade, 0, 0.06); d.timer = setTimeout(() => halt(d), 80); }
+  renderState();
+}
+function next() { const r = neighbor(1); if (!r) { toast('Fin de la playlist (boucle sur la playlist désactivée)'); return; } goTo(r[0], r[1], { play: A.playing, fade: A.playing ? ST.settings.fade : 0 }); }
+function prev() { const r = neighbor(-1); if (!r) { toast('Début de la playlist'); return; } goTo(r[0], r[1], { play: A.playing, fade: A.playing ? ST.settings.fade : 0 }); }
+function seek(t) {
+  const d = A.active; if (!d?.entry) return;
+  const dur = Number.isFinite(d.a.duration) ? d.a.duration : durOf(d.entry);
+  t = clamp(t, 0, Math.max(0, dur - 0.05));
+  if (d.rev) { const buf = d.rev.src.buffer; stopReverse(d); startRevSource(d, buf, t); }
+  else d.a.currentTime = t;
+  A.ending = false;
+}
+function stopAtEnd() {
+  const d = A.active; A.playing = false; A.ending = false; A.xfadeUntil = 0;
+  if (d) { clearTimeout(d.timer); fadeGain(d.fade, 0, 0.05); d.timer = setTimeout(() => { halt(d); if (d.entry) d.a.currentTime = inOf(d.entry); }, 80); }
+  renderState();
+}
+/* surveillance de la fin du morceau (point OUT) : déclenche le fondu vers le suivant */
+function check() {
+  const d = A.active;
+  if (!d || !d.entry || !A.playing || A.ending) return;
+  const e = d.entry;
+  if (d.rev) {   /* lecture inversée : arrêt au point IN */
+    if (deckTime(d) <= inOf(e) + 0.01) { A.ending = true; fadeGain(d.fade, 0, 0.03); setTimeout(() => revEnd(d), 40); }
+    return;
+  }
+  const t = d.a.currentTime, out = outOf(e, d.a.duration), r = rate();
+  if (!out) return;
+  const nx = autoNext();
+  let f = 0;   /* durée du fondu en secondes réelles ; la position du média avance r fois plus vite */
+  if (nx) { const nu = usefulOf(nx[1]) / r; f = Math.min(ST.settings.fade, usefulOf(e, d.a.duration) / r / 2, nu > 0 ? nu / 2 : ST.settings.fade); }
+  if (d.a.ended || t >= out - f * r - 0.015 * r) {
+    A.ending = true;
+    if (nx) goTo(nx[0], nx[1], { play: true, fade: f, auto: true });
+    else stopAtEnd();
+  }
+}
+
+/* ---------- import des fichiers audio ---------- */
+async function storeFile(f) {
+  const k = keyName(f.name);
+  for (const r of FILES.values()) if (keyName(r.name) === k && r.size === f.size) return r.id;
+  const id = uid(), meta = { id, name: nfc(f.name), size: f.size, type: f.type || '', an: null };
+  await DB.put('files', { ...meta, blob: f });
+  FILES.set(id, meta);
+  queueAnalysis(id);
+  return id;
+}
+function findFile(name, size) {
+  const k = keyName(name); let alt = null;
+  if (!k) return null;
+  for (const r of FILES.values()) if (keyName(r.name) === k) { if (!size || r.size === size) return r.id; alt = alt || r.id; }
+  return alt;
+}
+async function addAudio(files, pl, at) {
+  const out = [];
+  for (const f of files) {
+    try {
+      const fileId = await storeFile(f);
+      out.push({ id: uid(), title: stripExt(nfc(f.name)), artist: '', album: '', fileName: nfc(f.name), size: f.size, fileId, durMs: FILES.get(fileId)?.an?.durMs || 0, inMs: 0, outMs: 0, location: '', xtra: {} });
+    } catch (err) { toast(`Stockage impossible de ${f.name} : ${err.message || 'espace insuffisant'}`, 'bad'); }
+  }
+  pl.items.splice(at == null ? pl.items.length : clamp(at, 0, pl.items.length), 0, ...out);
+  return out;
+}
+async function relink(files) {
+  const want = new Map();
+  for (const p of ST.playlists) for (const e of p.items) if (!hasFile(e) && e.fileName) { const k = keyName(e.fileName); if (!want.has(k)) want.set(k, []); want.get(k).push([p, e]); }
+  const unmatched = [], matched = new Map(); let n = 0;
+  for (const f of files) {
+    const k = keyName(f.name), list = want.get(k);
+    if (!list) { unmatched.push(f); continue; }
+    try {
+      const id = await storeFile(f);
+      for (const [, e] of list) { e.fileId = id; if (!e.size) e.size = f.size; n++; }
+      matched.set(k, new Set(list.map(([p]) => p.id)));
+      want.delete(k);
+    } catch (err) { toast(`Stockage impossible de ${f.name}`, 'bad'); }
+  }
+  return { n, unmatched, matched };
+}
+async function handleIncoming(files, pl, at) {
+  files = [...files];
+  const xml = files.filter(isXml), aud = files.filter(f => !isXml(f) && isAudio(f)).sort(byName), other = files.length - xml.length - aud.length;
+  const msgs = [];
+  for (const f of xml) await importXmlFile(f);
+  if (aud.length) {
+    if (aud.length > 3) toast(`Import de ${aud.length} fichiers…`);
+    const target = pl || viewPl();
+    const r = await relink(aud);
+    if (r.n) msgs.push(`${r.n} morceau${r.n > 1 ? 'x' : ''} « à relier » complété${r.n > 1 ? 's' : ''}`);
+    /* un fichier déposé sur une liste y est ajouté, sauf s'il vient de compléter un morceau manquant de cette même liste */
+    const toAdd = aud.filter(f => !r.matched.get(keyName(f.name))?.has(target.id));
+    if (toAdd.length) {
+      const added = await addAudio(toAdd, target, at), k = added.length;
+      if (k) { msgs.push(`${k} morceau${k > 1 ? 'x' : ''} ajouté${k > 1 ? 's' : ''} à « ${target.name} »`); ST.view = target.id; A.flash = new Set(added.map(e => e.id)); }
+    }
+  }
+  if (other > 0) msgs.push(`${other} fichier${other > 1 ? 's' : ''} ignoré${other > 1 ? 's' : ''} (format non pris en charge)`);
+  if (!files.length) toast('Le navigateur n\'a transmis aucun fichier. Glissez les fichiers depuis le Finder (ou l\'Explorateur), ou utilisez « + Morceaux ».', 'warn', null, 8000);
+  if (msgs.length) toast(msgs.join(' · '));
+  save(); renderAll();
+  if (A.flash) {
+    $('#trkList .trk.flash')?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    setTimeout(() => { A.flash = null; $$('#trkList .trk.flash').forEach(x => x.classList.remove('flash')); }, 2600);
+  }
+}
+async function filesFromDT(dt) {
+  const ents = [...(dt.items || [])].map(i => i.kind === 'file' && i.webkitGetAsEntry ? i.webkitGetAsEntry() : null).filter(Boolean);
+  const plain = [...(dt.files || [])];
+  if (!ents.length) return plain;
+  const out = [];
+  async function walk(en) {
+    if (en.isFile) { try { out.push(await new Promise((r, j) => en.file(r, j))); } catch {} }
+    else if (en.isDirectory) {
+      const rd = en.createReader(); let batch;
+      do { batch = await new Promise((r, j) => rd.readEntries(r, j)).catch(() => []); for (const c of batch) await walk(c); } while (batch.length);
+    }
+  }
+  for (const en of ents) await walk(en);
+  return out.length ? out : plain;   /* repli si la lecture des dossiers a échoué */
+}
+
+/* ---------- analyse : sonie BS.1770 et forme d'onde ---------- */
+const anQueue = []; let anBusy = false;
+function queueAnalysis(id) { const m = FILES.get(id); if (!m || m.an || anQueue.includes(id)) return; anQueue.push(id); runQueue(); }
+async function runQueue() {
+  if (anBusy) return; anBusy = true;
+  while (anQueue.length) {
+    renderAnInfo();
+    const id = anQueue.shift();
+    try { await analyze(id); }
+    catch (err) { const m = FILES.get(id); if (m) { m.an = { err: true }; try { const rec = await DB.get('files', id); if (rec) { rec.an = m.an; await DB.put('files', rec); } } catch {} } }
+    afterAnalysis(id);
+  }
+  anBusy = false; renderAnInfo();
+}
+function decodeWith(ctx, ab) { return new Promise((res, rej) => { const p = ctx.decodeAudioData(ab, res, rej); if (p && p.then) p.then(res, rej); }); }
+function renderWith(off) { return new Promise((res, rej) => { off.oncomplete = ev => res(ev.renderedBuffer); const p = off.startRendering(); if (p && p.then) p.then(res, rej); }); }
+async function analyze(id) {
+  const rec = await DB.get('files', id); if (!rec?.blob) throw new Error('absent');
+  const ab = await rec.blob.arrayBuffer();
+  let buf = null, SR = 0, lastErr;
+  for (const sr of [16000, 22050, 44100]) {
+    try { const oc = new OfflineAudioContext(2, sr, sr); buf = await decodeWith(oc, ab.slice(0)); SR = sr; break; } catch (err) { lastErr = err; }
+  }
+  if (!buf) throw lastErr || new Error('décodage');
+  const ch = Math.min(2, buf.numberOfChannels), n = buf.length;
+  /* forme d'onde : crêtes par tranche, 0–255 */
+  const NB = 1600, pk = []; let peak = 0;
+  for (let c = 0; c < ch; c++) {
+    const x = buf.getChannelData(c), arr = new Array(NB), step = n / NB;
+    for (let b = 0; b < NB; b++) {
+      let m = 0; const s = Math.floor(b * step), e = Math.min(n, Math.floor((b + 1) * step));
+      for (let i = s; i < e; i++) { const v = x[i] < 0 ? -x[i] : x[i]; if (v > m) m = v; }
+      arr[b] = Math.min(255, Math.round(m * 255)); if (m > peak) peak = m;
+    }
+    pk.push(arr);
+  }
+  /* pondération K (étage plateau + passe-haut), puis porte absolue −70 et relative −10 */
+  const off = new OfflineAudioContext(ch, n, SR), src = off.createBufferSource(); src.buffer = buf;
+  const hs = off.createBiquadFilter(); hs.type = 'highshelf'; hs.frequency.value = 1681; hs.gain.value = 4;
+  const hp = off.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 38; hp.Q.value = 0.5;
+  src.connect(hs); hs.connect(hp); hp.connect(off.destination); src.start();
+  const kb = await renderWith(off);
+  const H = Math.round(0.1 * SR), nh = Math.floor(n / H), hsum = new Float64Array(nh);
+  for (let c = 0; c < kb.numberOfChannels; c++) {
+    const x = kb.getChannelData(c);
+    for (let h = 0; h < nh; h++) { let s = 0; for (let i = h * H, e = i + H; i < e; i++) s += x[i] * x[i]; hsum[h] += s; }
+  }
+  const LK = z => -0.691 + 10 * Math.log10(z), zs = [];
+  for (let b = 0; b + 4 <= nh; b++) zs.push((hsum[b] + hsum[b + 1] + hsum[b + 2] + hsum[b + 3]) / (4 * H));
+  let lufs = null;
+  const g1 = zs.filter(z => z > 0 && LK(z) > -70);
+  if (g1.length) {
+    const m1 = g1.reduce((a, b) => a + b, 0) / g1.length, rel = LK(m1) - 10;
+    const g2 = g1.filter(z => LK(z) > rel);
+    if (g2.length) lufs = LK(g2.reduce((a, b) => a + b, 0) / g2.length);
+  }
+  const an = { lufs, peak: peak > 0 ? 20 * Math.log10(peak) : -120, durMs: Math.round(buf.duration * 1000), pk, sr: SR };
+  rec.an = an; await DB.put('files', rec);
+  const m = FILES.get(id); if (m) m.an = an;
+}
+function afterAnalysis(id) {
+  let ch = false;
+  for (const p of ST.playlists) for (const e of p.items) if (e.fileId === id) { const an = anOf(e); if (an?.durMs && !e.durMs) { e.durMs = an.durMs; ch = true; } }
+  if (ch) save();
+  if (A.active?.entry?.fileId === id) { applyNorm(); WC.key = ''; }
+  renderTracks(); renderPlaylists(); renderSettings(); renderNow();
+}
+function renderAnInfo() { const n = anQueue.length + (anBusy ? 1 : 0); $('#anInfo').textContent = n ? `Analyse de sonie : ${n} en cours` : ''; }
+
+/* ---------- import / export XML (format plist Apple Music) ---------- */
+function plistVal(n) {
+  switch (n.tagName) {
+    case 'dict': { const o = {}; let k = null; for (const c of n.children) { if (c.tagName === 'key') k = c.textContent; else if (k != null) { o[k] = plistVal(c); k = null; } } return o; }
+    case 'array': return [...n.children].map(plistVal);
+    case 'string': return n.textContent;
+    case 'integer': return parseInt(n.textContent, 10);
+    case 'real': return parseFloat(n.textContent);
+    case 'true': return true;
+    case 'false': return false;
+    case 'date': return { __date: n.textContent.trim() };
+    case 'data': return { __data: n.textContent.replace(/\s+/g, '') };
+    default: return null;
+  }
+}
+function parsePlist(text) {
+  const doc = new DOMParser().parseFromString(text, 'application/xml');
+  if (doc.querySelector('parsererror')) throw new Error('XML mal formé');
+  const root = doc.documentElement?.tagName === 'plist' ? doc.documentElement.firstElementChild : null;
+  if (!root) throw new Error('ce n\'est pas un fichier plist Apple');
+  return plistVal(root);
+}
+const HANDLED = new Set(['Track ID', 'Name', 'Artist', 'Album', 'Total Time', 'Start Time', 'Stop Time', 'Normalization', 'Location', 'Persistent ID', 'Track Type', 'File Folder Count', 'Library Folder Count']);
+function trackToEntry(t) {
+  const loc = typeof t.Location === 'string' ? t.Location : '';
+  let fileName = '';
+  const last = loc.split('/').pop() || '';
+  try { fileName = nfc(decodeURIComponent(last)); } catch { fileName = nfc(last); }
+  const xtra = {};
+  for (const [k, v] of Object.entries(t)) if (!HANDLED.has(k) && (v === null || typeof v !== 'object' || v.__date)) xtra[k] = v;
+  const size = Number.isInteger(t.Size) ? t.Size : 0;
+  return { id: uid(), title: nfc(t.Name || stripExt(fileName) || 'Sans titre'), artist: nfc(t.Artist || ''), album: nfc(t.Album || ''), fileName, location: loc, size,
+    durMs: Number.isFinite(t['Total Time']) ? t['Total Time'] : 0, inMs: Number.isFinite(t['Start Time']) ? t['Start Time'] : 0, outMs: Number.isFinite(t['Stop Time']) ? t['Stop Time'] : 0,
+    appleNorm: Number.isFinite(t.Normalization) ? t.Normalization : 0, persist: typeof t['Persistent ID'] === 'string' ? t['Persistent ID'] : '', xtra, fileId: findFile(fileName, size) };
+}
+function importLibrary(obj, fname) {
+  const T = obj.Tracks || {}, made = [];
+  const pls = (obj.Playlists || []).filter(p => p && Array.isArray(p['Playlist Items']) && !p.Master && !p['Distinguished Kind']);
+  for (const p of pls) {
+    const items = p['Playlist Items'].map(it => T[it['Track ID']]).filter(Boolean).map(trackToEntry);
+    made.push({ id: uid(), name: uniqueName(nfc(p.Name || fname)), items });
+  }
+  if (!made.length && Object.keys(T).length) made.push({ id: uid(), name: uniqueName(fname), items: Object.values(T).map(trackToEntry) });
+  return made;
+}
+async function importXmlFile(f) {
+  let obj;
+  try { obj = parsePlist(await f.text()); } catch (err) { toast(`${f.name} : ${err.message}`, 'bad'); return; }
+  const made = importLibrary(obj, stripExt(f.name));
+  if (!made.length) { toast(`${f.name} : aucune playlist trouvée`, 'warn'); return; }
+  if (ST.playlists.length === 1 && !ST.playlists[0].items.length && ST.playlists[0].name === 'Ma playlist') ST.playlists = [];
+  ST.playlists.push(...made);
+  ST.view = made[0].id;
+  for (const p of made) {
+    const miss = p.items.filter(e => !hasFile(e)).length;
+    toast(`Playlist « ${p.name} » importée : ${p.items.length} morceau${p.items.length > 1 ? 'x' : ''}${miss ? ` · ${miss} fichier${miss > 1 ? 's' : ''} à relier` : ''}`, miss ? 'warn' : '');
+  }
+  save(); renderAll();
+}
+function pid(s) {
+  let h1 = 0x811c9dc5, h2 = 0x6b43a9b5;
+  for (const ch of String(s)) { const k = ch.codePointAt(0); h1 = Math.imul(h1 ^ k, 16777619) >>> 0; h2 = Math.imul(h2 ^ k, 0x5bd1e995) >>> 0; h2 = (h2 ^ (h2 >>> 13)) >>> 0; }
+  return (h1.toString(16).padStart(8, '0') + h2.toString(16).padStart(8, '0')).toUpperCase();
+}
+function kindOf(name) {
+  const x = (String(name).match(/\.([^.]+)$/) || [])[1]?.toLowerCase();
+  return { mp3: 'MPEG audio file', m4a: 'AAC audio file', aac: 'AAC audio file', wav: 'WAV audio file', aif: 'AIFF audio file', aiff: 'AIFF audio file' }[x] || '';
+}
+function buildPlist(pls) {
+  const x = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const kv = (I, k, v) => {
+    if (v === true || v === false) return `${I}<key>${x(k)}</key><${v}/>\n`;
+    if (v && typeof v === 'object' && v.__date) return `${I}<key>${x(k)}</key><date>${x(v.__date)}</date>\n`;
+    if (typeof v === 'number') return `${I}<key>${x(k)}</key><${Number.isInteger(v) ? 'integer' : 'real'}>${v}</${Number.isInteger(v) ? 'integer' : 'real'}>\n`;
+    return `${I}<key>${x(k)}</key><string>${x(v)}</string>\n`;
+  };
+  let id = 1000; const rows = [], lists = [];
+  for (const p of pls) { const ids = []; for (const e of p.items) { id++; ids.push(id); rows.push([id, e]); } lists.push([p, ids]); }
+  let s = '<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">\n<plist version="1.0">\n<dict>\n';
+  s += kv('\t', 'Major Version', 1) + kv('\t', 'Minor Version', 1) + kv('\t', 'Date', { __date: new Date().toISOString().replace(/\.\d+Z$/, 'Z') }) +
+    kv('\t', 'Application Version', 'Music Player ' + VERSION) + kv('\t', 'Features', 5) + kv('\t', 'Show Content Ratings', true) + kv('\t', 'Library Persistent ID', pid('labo-playlist-player'));
+  s += '\t<key>Tracks</key>\n\t<dict>\n';
+  for (const [tid, e] of rows) {
+    const I = '\t\t\t', xt = e.xtra || {};
+    s += `\t\t<key>${tid}</key>\n\t\t<dict>\n` + kv(I, 'Track ID', tid) + kv(I, 'Name', e.title || stripExt(e.fileName));
+    if (e.artist) s += kv(I, 'Artist', e.artist);
+    if (e.album) s += kv(I, 'Album', e.album);
+    for (const [k, v] of Object.entries(xt)) s += kv(I, k, v);
+    if (!('Kind' in xt) && kindOf(e.fileName)) s += kv(I, 'Kind', kindOf(e.fileName));
+    if (!('Size' in xt) && e.size) s += kv(I, 'Size', e.size);
+    const d = Math.round(e.durMs || anOf(e)?.durMs || 0);
+    if (d) s += kv(I, 'Total Time', d);
+    if (e.inMs) s += kv(I, 'Start Time', Math.round(e.inMs));
+    if (e.outMs) s += kv(I, 'Stop Time', Math.round(e.outMs));
+    if (e.appleNorm) s += kv(I, 'Normalization', e.appleNorm);
+    s += kv(I, 'Persistent ID', e.persist || pid(e.id)) + kv(I, 'Track Type', 'File');
+    s += kv(I, 'Location', e.location || ('file:///' + encodeURIComponent(e.fileName || '')));
+    s += '\t\t</dict>\n';
+  }
+  s += '\t</dict>\n\t<key>Playlists</key>\n\t<array>\n';
+  for (const [p, ids] of lists) {
+    const I = '\t\t\t';
+    s += '\t\t<dict>\n' + kv(I, 'Name', p.name) + kv(I, 'Description', '') + kv(I, 'Playlist ID', ++id) + kv(I, 'Playlist Persistent ID', pid(p.id)) + kv(I, 'All Items', true) + `${I}<key>Playlist Items</key>\n${I}<array>\n`;
+    for (const t of ids) s += `${I}\t<dict>\n${I}\t\t<key>Track ID</key><integer>${t}</integer>\n${I}\t</dict>\n`;
+    s += `${I}</array>\n\t\t</dict>\n`;
+  }
+  return s + '\t</array>\n</dict>\n</plist>\n';
+}
+function exportPls(pls) {
+  if (!pls.length) return;
+  const xml = buildPlist(pls), now = new Date(), p2 = n => String(n).padStart(2, '0');
+  const safe = s => String(s).replace(/[\\/:*?"<>|]+/g, '_').trim().slice(0, 60) || 'playlist';
+  const name = (pls.length === 1 ? safe(pls[0].name) : `LABO_playlists_${now.getFullYear()}${p2(now.getMonth() + 1)}${p2(now.getDate())}`) + '.xml';
+  try {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([xml], { type: 'application/xml' })); a.download = name;
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+  } catch {}
+  toast(`Export : ${name}`, '', { label: 'Afficher le XML', fn: () => showXml(name, xml) }, 8000);
+}
+async function showXml(name, xml) {
+  const r = await ask(name, `<p class="cap" style="margin-top:0">Si le téléchargement a été bloqué (intégration restreinte), copiez ce texte dans un fichier .xml.</p><textarea class="xmlta" readonly>${esc(xml)}</textarea>`, ['Fermer', 'Copier']);
+  if (r === 'Copier') {
+    try { await navigator.clipboard.writeText(xml); toast('XML copié dans le presse-papiers'); }
+    catch { toast('Copie refusée par le navigateur : sélectionnez le texte et copiez-le.', 'warn'); }
+  }
+}
+
+/* ---------- périphérique de sortie (AudioContext.setSinkId : Chrome, Edge) ---------- */
+const SINK_OK = typeof window.AudioContext === 'function' && typeof AudioContext.prototype.setSinkId === 'function' && !!navigator.mediaDevices?.enumerateDevices;
+async function listSinks() {
+  const sel = $('#sink'), btn = $('#sinkNames');
+  if (!SINK_OK) {
+    sel.innerHTML = '<option>Sortie du système (choix non disponible dans ce navigateur)</option>';
+    sel.disabled = true; btn.hidden = true;
+    sel.title = 'Le choix de la sortie audio nécessite Chrome ou Edge. Dans Safari, choisissez la sortie dans Réglages Système › Son.';
+    return;
+  }
+  let devs = [];
+  try { devs = (await navigator.mediaDevices.enumerateDevices()).filter(d => d.kind === 'audiooutput' && d.deviceId && d.deviceId !== 'default' && d.deviceId !== 'communications'); } catch {}
+  const cur = ST.settings.sinkId || '';
+  sel.innerHTML = '<option value="">Sortie par défaut du système</option>' + devs.map((d, i) => `<option value="${esc(d.deviceId)}">${esc(d.label || 'Sortie ' + (i + 1))}</option>`).join('');
+  if (cur && !devs.some(d => d.deviceId === cur)) sel.insertAdjacentHTML('beforeend', `<option value="${esc(cur)}">${esc(ST.settings.sinkLabel || 'Sortie enregistrée')} (non branchée)</option>`);
+  sel.value = cur;
+  btn.hidden = devs.length > 0 && devs.every(d => d.label);
+}
+async function revealSinks() {
+  let state = 'prompt';
+  try { state = (await navigator.permissions.query({ name: 'microphone' })).state; } catch {}
+  if (state === 'denied') {
+    toast('L\'autorisation a été refusée pour cette page. Pour la rétablir : cliquez sur l\'icône à gauche de l\'adresse (réglages du site), mettez « Micro » sur « Autoriser », puis rechargez la page.', 'warn', null, 12000);
+    return;
+  }
+  if (state !== 'granted') {
+    const r = await ask('Afficher les sorties audio',
+      `<p>Chrome ne donne le nom des haut-parleurs, casques et cartes son qu'aux pages autorisées à utiliser le <b>micro</b> : c'est sa protection de la liste des périphériques. La fenêtre qui va s'ouvrir parle donc de micro et montre les <b>entrées</b> ; c'est normal.</p>
+       <p>Cliquez sur <b>Autoriser</b>. Le micro est refermé aussitôt : rien n'est écouté ni enregistré. Le menu des <b>sorties</b> s'ouvre ensuite. Chrome mémorise l'autorisation : la question ne sera plus posée.</p>`,
+      ['Annuler', 'Continuer']);
+    if (r !== 'Continuer') return;
+  }
+  try { const s = await navigator.mediaDevices.getUserMedia({ audio: true }); s.getTracks().forEach(t => t.stop()); }
+  catch (err) {
+    toast(err?.name === 'NotAllowedError' ? 'Autorisation refusée : sans elle, Chrome ne donne pas la liste des sorties audio. (Dans une page intégrée à Wix, la demande est souvent bloquée : ouvrez le lecteur sur sa propre page.)' : 'Impossible d\'obtenir la liste des sorties audio.', 'warn', null, 9000);
+    return;
+  }
+  await listSinks();
+  const sel = $('#sink'), n = sel.options.length - 1;
+  if (n > 0) {
+    toast(`${n} sortie${n > 1 ? 's' : ''} audio disponible${n > 1 ? "s" : ""} dans le menu « Sortie ».`);
+    sel.focus();
+    try { sel.showPicker?.(); } catch {}
+  } else toast('Aucune sortie audio supplémentaire n\'a été trouvée : seule la sortie par défaut est disponible.', 'warn');
+}
+async function applySink() {
+  if (!SINK_OK || !A.ctx) return;
+  const id = ST.settings.sinkId || '';
+  try { if (A.ctx.sinkId !== id) await A.ctx.setSinkId(id); }
+  catch (err) {
+    toast(`Sortie « ${ST.settings.sinkLabel || 'choisie'} » indisponible${err?.name === 'NotAllowedError' ? ' (non autorisée dans cette page intégrée)' : ''} : retour à la sortie par défaut.`, 'warn', null, 7000);
+    ST.settings.sinkId = ''; ST.settings.sinkLabel = ''; save();
+    try { await A.ctx.setSinkId(''); } catch {}
+    listSinks();
+  }
+}
+
+/* ---------- interface : playlists ---------- */
+function renderPlaylists() {
+  const box = $('#plList');
+  if (box.querySelector('input')) return;   // renommage en cours
+  box.innerHTML = ST.playlists.map(p => {
+    const playing = A.plId === p.id && A.playing, miss = p.items.filter(e => !hasFile(e)).length;
+    return `<li class="pl${p.id === ST.view ? ' sel' : ''}" data-id="${p.id}" draggable="true">
+      <span class="hd" aria-hidden="true">⠿</span>
+      <div style="min-width:0"><div class="nm">${playing ? '<i class="eq" title="en lecture"></i>' : ''}${esc(p.name)}</div>
+      <div class="meta mono">${p.items.length} morceau${p.items.length > 1 ? 'x' : ''} · ${tc(plTotal(p), false)}${miss ? ` · <span class="warn">${miss} à relier</span>` : ''}</div></div>
+      <span class="acts"><button class="ib" data-act="ren" type="button" title="Renommer">✎</button><button class="ib" data-act="dup" type="button" title="Dupliquer">⧉</button><button class="ib" data-act="exp" type="button" title="Exporter en .xml">⤓</button><button class="ib del" data-act="del" type="button" title="Supprimer">✕</button></span></li>`;
+  }).join('') || '<li class="empty">Aucune playlist</li>';
+}
+function renamePl(li, p) {
+  const nm = li.querySelector('.nm'); if (!nm) return;
+  const inp = document.createElement('input'); inp.value = p.name; inp.setAttribute('aria-label', 'Nom de la playlist');
+  nm.replaceWith(inp); inp.focus(); inp.select();
+  let done = false;
+  const commit = ok => { if (done) return; done = true; if (ok && inp.value.trim()) p.name = inp.value.trim(); inp.remove(); save(); renderPlaylists(); renderTracks(); renderNow(); };
+  inp.addEventListener('keydown', ev => { ev.stopPropagation(); if (ev.key === 'Enter') commit(true); if (ev.key === 'Escape') commit(false); });
+  inp.addEventListener('blur', () => commit(true));
+}
+function newPl() {
+  const p = { id: uid(), name: uniqueName('Nouvelle playlist'), items: [] };
+  ST.playlists.push(p); ST.view = p.id; save(); renderAll();
+  const li = $(`#plList .pl[data-id="${p.id}"]`); if (li) renamePl(li, p);
+}
+function dupPl(p) {
+  const q = { id: uid(), name: uniqueName(p.name + ' copie'), items: p.items.map(cloneEntry) };
+  ST.playlists.splice(ST.playlists.indexOf(p) + 1, 0, q); ST.view = q.id; save(); renderAll();
+}
+async function delPl(p) {
+  const r = await ask('Supprimer la playlist', `<p>« ${esc(p.name)} » et ses ${p.items.length} morceau${p.items.length > 1 ? 'x' : ''} ? Les fichiers audio qui ne servent dans aucune autre playlist seront effacés de la mémoire du navigateur.</p>`, ['Annuler', 'Supprimer']);
+  if (r !== 'Supprimer') return;
+  const i = ST.playlists.indexOf(p); ST.playlists.splice(i, 1);
+  if (A.plId === p.id) A.plId = null;
+  if (!ST.playlists.length) ST.playlists.push({ id: uid(), name: 'Ma playlist', items: [] });
+  if (ST.view === p.id) ST.view = ST.playlists[Math.max(0, i - 1)].id;
+  save(); renderAll(); scheduleGc(1500);
+}
+
+/* ---------- interface : morceaux ---------- */
+function renderTracks() {
+  const pl = viewPl(), box = $('#trkList');
+  if (!pl) { box.innerHTML = ''; return; }
+  $('#trkName').textContent = pl.name;
+  const miss = pl.items.filter(e => !hasFile(e));
+  $('#trkStats').textContent = `${pl.items.length} morceau${pl.items.length > 1 ? 'x' : ''} · durée utile ${tc(plTotal(pl), false)}`;
+  const mb = $('#missBanner');
+  mb.hidden = !miss.length;
+  if (miss.length) mb.innerHTML = `<b class="warn">${miss.length} fichier${miss.length > 1 ? 's' : ''} audio à relier.</b> Les chemins du .xml (file://…) ne sont pas lisibles depuis une page web : choisissez les fichiers ou le dossier qui les contient (sous-dossiers compris), ou glissez-les sur la liste.<br><button class="btn primary" type="button" data-link="dir">Choisir le dossier…</button><button class="btn" type="button" data-link="files">Choisir les fichiers…</button>`;
+  const cur = A.active?.entry;
+  box.innerHTML = pl.items.map((e, i) => {
+    const isCur = cur === e, an = anOf(e), nd = normDb(e);
+    const cls = ['trk', isCur ? 'cur' : '', isCur && A.playing ? 'playing' : '', !isCur && A.pickId === e.id ? 'pick' : '', A.flash?.has(e.id) ? 'flash' : '', hasFile(e) ? '' : 'missing'].join(' ');
+    const io = (e.inMs || e.outMs) ? `IN ${e.inMs ? tc(e.inMs / 1000) : 'début'} · OUT ${e.outMs ? tc(e.outMs / 1000) : 'fin'}` : '';
+    const lu = !hasFile(e) ? '' : an?.err ? 'non analysé' : an ? `${dB(an.lufs)} LUFS` : 'analyse…';
+    const sub = [e.artist, e.album].filter(Boolean).join(' · ') || e.fileName || '';
+    return `<li class="${cls}" data-id="${e.id}" draggable="true" title="${esc(e.fileName || '')}">
+      <span class="hd" aria-hidden="true">⠿</span><span class="no">${isCur && A.playing ? '▶' : i + 1}</span>
+      <div style="min-width:0"><div class="t1">${esc(e.title)}</div><div class="t2">${esc(sub)}</div></div>
+      <span class="io">${io}</span><span class="du">${tc(usefulOf(e), false)}</span>
+      <span class="lu" title="${nd.known ? `correction ${dB(nd.g, 1, true)} dB (${nd.src})` : ''}">${lu}</span>
+      <span class="acts"><button class="ib" data-act="rep" type="button" title="${hasFile(e) ? 'Remplacer par un autre fichier' : 'Localiser le fichier'}">⇄</button><button class="ib del" data-act="del" type="button" title="Retirer de la playlist">✕</button></span></li>`;
+  }).join('') || '<li class="empty">Playlist vide : glissez des fichiers .mp3 ou .m4a ici, ou cliquez sur « + Morceaux ».</li>';
+}
+function onTrackClick(pl, e) {
+  if (!hasFile(e)) { pickReplace(pl, e); return; }
+  /* pendant la lecture, un simple clic sélectionne seulement : le fondu enchaîné se fait au double-clic */
+  if (A.playing) {   /* mise à jour des classes sans redessiner la liste, pour que le double-clic garde sa cible */
+    A.pickId = A.active?.entry === e ? null : e.id;
+    $$('#trkList .trk.pick').forEach(x => x.classList.remove('pick'));
+    if (A.pickId) $(`#trkList .trk[data-id="${e.id}"]`)?.classList.add('pick');
+    return;
+  }
+  if (A.active?.entry === e) { play(); return; }
+  goTo(pl, e, { play: false });
+}
+function delTrack(pl, e) {
+  const i = pl.items.indexOf(e); if (i < 0) return;
+  pl.items.splice(i, 1);
+  if (A.active?.entry === e) A.lastIdx = i;
+  save(); renderPlaylists(); renderTracks(); renderNow();
+  toast(`« ${e.title} » retiré`, '', { label: 'Annuler', fn: () => { pl.items.splice(Math.min(i, pl.items.length), 0, e); save(); renderAll(); } }, 7000);
+  scheduleGc();
+}
+let REP = null;
+function pickReplace(pl, e) { REP = { pl, e }; $('#inRep').value = ''; $('#inRep').click(); }
+$('#inRep').addEventListener('change', async ev => {
+  const f = ev.target.files[0]; if (!f || !REP) return;
+  const { pl, e } = REP; REP = null;
+  let id; try { id = await storeFile(f); } catch (err) { toast('Stockage impossible : ' + err.message, 'bad'); return; }
+  if (!hasFile(e)) { e.fileId = id; e.size = f.size; toast(`Fichier relié : ${f.name}`); }
+  else {
+    Object.assign(e, { fileId: id, fileName: nfc(f.name), size: f.size, title: stripExt(nfc(f.name)), artist: '', album: '', location: '', inMs: 0, outMs: 0, appleNorm: 0, persist: '', xtra: {}, durMs: FILES.get(id)?.an?.durMs || 0 });
+    toast(`Morceau remplacé par ${f.name}`);
+    if (A.active?.entry === e) goTo(pl, e, { play: A.playing, fade: A.playing ? ST.settings.fade : 0 });
+    scheduleGc();
+  }
+  save(); renderAll();
+});
+
+/* ---------- glisser-déposer ----------
+   Le type de geste est lu dans les données transportées (et non dans une variable) :
+   « internal » = morceau ou playlist de la page, « files » = fichiers du Finder/Explorateur,
+   « other » = liens (ex. éléments glissés depuis l'app Musique, qui n'arrivent pas comme fichiers). */
+const DT_INT = 'application/x-labo-player';
+let drag = null;
+function dragKind(ev) {
+  const t = [...(ev.dataTransfer?.types || [])].map(x => String(x).toLowerCase());
+  if (t.includes(DT_INT)) return drag ? 'internal' : null;
+  if (t.includes('files') || t.includes('public.file-url')) return 'files';
+  if (t.includes('text/uri-list') || t.includes('url')) return 'other';
+  return null;
+}
+function clearMarks() { $$('.dropbefore,.dropafter,.dropin').forEach(x => x.classList.remove('dropbefore', 'dropafter', 'dropin')); }
+let dragDepth = 0;
+function endFileDrag() { dragDepth = 0; document.body.classList.remove('filedrag'); clearMarks(); }
+function endInternal() { drag = null; $$('.dragging').forEach(x => x.classList.remove('dragging')); clearMarks(); }
+function dropIndex(list, sel, y) { const rows = $$(sel, list); for (let i = 0; i < rows.length; i++) { const r = rows[i].getBoundingClientRect(); if (y < r.top + r.height / 2) return i; } return rows.length; }
+function markIndex(list, sel, idx) { const rows = $$(sel, list); if (!rows.length) { list.classList.add('dropin'); return; } if (idx < rows.length) rows[idx].classList.add('dropbefore'); else rows[rows.length - 1].classList.add('dropafter'); }
+function moveItem(arr, from, to) { if (from < 0) return; const [x] = arr.splice(from, 1); if (to > from) to--; arr.splice(clamp(to, 0, arr.length), 0, x); }
+function foreignInfo(dt) { let u = ''; try { u = (dt.getData('text/uri-list') || '') + ' ' + (dt.getData('text/plain') || ''); } catch {} return u; }
+function explainForeign(info) {
+  if (/file:\/\//i.test(info)) toast('Ces éléments arrivent comme des liens et non comme des fichiers (c\'est le cas depuis l\'app Musique). Faites « Afficher dans le Finder », puis glissez les fichiers depuis le Finder, ou utilisez « + Morceaux ».', 'warn', null, 10000);
+  else if (/https?:\/\//i.test(info)) toast('Les liens web ne peuvent pas être ajoutés : déposez des fichiers audio (.mp3, .m4a…) ou un .xml.', 'warn', null, 7000);
+}
+/* zone de dépôt : dragenter et dragover sont tous deux annulés (exigé par Safari et Firefox) */
+function zone(el, over, drop) {
+  el.addEventListener('dragenter', ev => { if (dragKind(ev)) ev.preventDefault(); });
+  el.addEventListener('dragover', ev => {
+    const k = dragKind(ev); if (!k) return;
+    ev.preventDefault(); ev.stopPropagation(); clearMarks();
+    try { ev.dataTransfer.dropEffect = over(ev, k) || 'copy'; } catch {}
+  });
+  el.addEventListener('dragleave', ev => { if (!el.contains(ev.relatedTarget)) clearMarks(); });
+  el.addEventListener('drop', ev => {
+    const k = dragKind(ev); if (!k) return;
+    ev.preventDefault(); ev.stopPropagation();
+    const d = drag, payload = k === 'files' ? filesFromDT(ev.dataTransfer) : k === 'other' ? foreignInfo(ev.dataTransfer) : null;
+    endFileDrag(); endInternal();
+    if (k === 'other') { explainForeign(payload); return; }
+    drop(ev, k, d, payload);
+  });
+}
+
+const plList = $('#plList');
+plList.addEventListener('click', ev => {
+  const li = ev.target.closest('.pl'); if (!li || ev.target.closest('input')) return;
+  const p = plById(li.dataset.id); if (!p) return;
+  const act = ev.target.closest('[data-act]')?.dataset.act;
+  if (act === 'ren') return renamePl(li, p);
+  if (act === 'dup') return dupPl(p);
+  if (act === 'exp') return exportPls([p]);
+  if (act === 'del') return delPl(p);
+  if (ST.view !== p.id) { ST.view = p.id; save(); renderPlaylists(); renderTracks(); }
+});
+plList.addEventListener('dblclick', ev => { const li = ev.target.closest('.pl'); if (li && !ev.target.closest('[data-act],input')) renamePl(li, plById(li.dataset.id)); });
+plList.addEventListener('dragstart', ev => {
+  const li = ev.target.closest('.pl'); if (!li) return;
+  drag = { type: 'pl', id: li.dataset.id };
+  ev.dataTransfer.effectAllowed = 'move'; ev.dataTransfer.setData(DT_INT, 'pl'); ev.dataTransfer.setData('text/plain', 'playlist');
+  li.classList.add('dragging');
+});
+plList.addEventListener('dragend', endInternal);
+zone(plList, (ev, k) => {
+  if (k === 'internal' && drag.type === 'pl') { markIndex(plList, '.pl', dropIndex(plList, '.pl', ev.clientY)); return 'move'; }
+  const li = ev.target.closest('.pl'); (li || plList).classList.add('dropin'); return 'copy';
+}, async (ev, k, d, pending) => {
+  const li = ev.target.closest('.pl'), target = li ? plById(li.dataset.id) : null;
+  if (k === 'internal') {
+    if (d?.type === 'pl') { moveItem(ST.playlists, ST.playlists.findIndex(p => p.id === d.id), dropIndex(plList, '.pl', ev.clientY)); save(); renderPlaylists(); return; }
+    if (d?.type === 'trk') {
+      const [, e] = findEntry(d.id); if (!target || !e) return;
+      target.items.push(cloneEntry(e)); save(); renderPlaylists(); if (target.id === ST.view) renderTracks();
+      toast(`« ${e.title} » copié dans « ${target.name} »`);
+    }
+    return;
+  }
+  const files = await pending;
+  let tp = target;
+  if (!tp && files.some(f => !isXml(f) && isAudio(f))) { tp = { id: uid(), name: uniqueName('Nouvelle playlist'), items: [] }; ST.playlists.push(tp); }
+  handleIncoming(files, tp);
+});
+
+const trkList = $('#trkList');
+trkList.addEventListener('click', ev => {
+  const li = ev.target.closest('.trk'); if (!li) return;
+  const pl = viewPl(), e = pl?.items.find(x => x.id === li.dataset.id); if (!e) return;
+  const act = ev.target.closest('[data-act]')?.dataset.act;
+  if (act === 'del') return delTrack(pl, e);
+  if (act === 'rep') return pickReplace(pl, e);
+  if (ev.target.closest('.hd')) return;
+  onTrackClick(pl, e);
+});
+trkList.addEventListener('dblclick', ev => {
+  const li = ev.target.closest('.trk'); if (!li || ev.target.closest('[data-act],.hd')) return;
+  const pl = viewPl(), e = pl?.items.find(x => x.id === li.dataset.id);
+  if (e && hasFile(e) && !(A.active?.entry === e && A.playing)) { if (A.active?.entry === e) play(); else goTo(pl, e, { play: true, fade: A.playing ? ST.settings.fade : 0 }); }
+});
+trkList.addEventListener('dragstart', ev => {
+  const li = ev.target.closest('.trk'); if (!li) return;
+  drag = { type: 'trk', plId: ST.view, id: li.dataset.id };
+  ev.dataTransfer.effectAllowed = 'copyMove'; ev.dataTransfer.setData(DT_INT, 'trk'); ev.dataTransfer.setData('text/plain', 'morceau');
+  li.classList.add('dragging');
+});
+trkList.addEventListener('dragend', endInternal);
+/* toute la zone « Morceaux » (en-tête, bandeau, liste) accepte le dépôt */
+zone($('#bayTrk'), (ev, k) => {
+  if (k === 'internal' && drag.type !== 'trk') return 'none';
+  markIndex(trkList, '.trk', dropIndex(trkList, '.trk', ev.clientY));
+  return k === 'internal' && drag.plId === ST.view ? 'move' : 'copy';
+}, async (ev, k, d, pending) => {
+  const pl = viewPl(), idx = dropIndex(trkList, '.trk', ev.clientY);
+  if (!pl) return;
+  if (k === 'internal') {
+    if (d?.type !== 'trk') return;
+    if (d.plId === pl.id) moveItem(pl.items, pl.items.findIndex(x => x.id === d.id), idx);
+    else { const [, e] = findEntry(d.id); if (e) pl.items.splice(idx, 0, cloneEntry(e)); }
+    save(); renderTracks(); renderPlaylists(); renderNow(); return;
+  }
+  handleIncoming(await pending, pl, idx);
+});
+/* dépôt ailleurs sur la page : ajout à la playlist affichée */
+addEventListener('dragenter', ev => { const k = dragKind(ev); if (k === 'files') { dragDepth++; document.body.classList.add('filedrag'); } if (k === 'files' || k === 'other') ev.preventDefault(); });
+addEventListener('dragleave', ev => { if (dragKind(ev) === 'files' && --dragDepth <= 0) endFileDrag(); });
+addEventListener('dragover', ev => { const k = dragKind(ev); if (k === 'files' || k === 'other') { ev.preventDefault(); try { ev.dataTransfer.dropEffect = 'copy'; } catch {} } });
+addEventListener('drop', async ev => {
+  const k = dragKind(ev); if (k !== 'files' && k !== 'other') return;
+  ev.preventDefault();
+  if (k === 'other') { const info = foreignInfo(ev.dataTransfer); endFileDrag(); explainForeign(info); return; }
+  const pending = filesFromDT(ev.dataTransfer); endFileDrag(); handleIncoming(await pending, viewPl());
+});
+addEventListener('dragend', endInternal, true);
+
+/* ---------- boutons et sélecteurs de fichiers ---------- */
+$('#bNewPl').addEventListener('click', newPl);
+$('#bImpXml').addEventListener('click', () => { $('#inXml').value = ''; $('#inXml').click(); });
+$('#bExpAll').addEventListener('click', () => exportPls(ST.playlists));
+$('#bExpCur').addEventListener('click', () => { const p = viewPl(); if (p) exportPls([p]); });
+$('#bAdd').addEventListener('click', () => { $('#inAdd').value = ''; $('#inAdd').click(); });
+$('#inAdd').addEventListener('change', ev => handleIncoming(ev.target.files, viewPl()));
+$('#inXml').addEventListener('change', async ev => { for (const f of ev.target.files) await importXmlFile(f); });
+$('#missBanner').addEventListener('click', ev => { const b = ev.target.closest('[data-link]'); if (!b) return; const inp = b.dataset.link === 'dir' ? $('#inDir') : $('#inLink'); inp.value = ''; inp.click(); });
+async function onLinkPick(ev) {
+  const files = [...ev.target.files].filter(isAudio);
+  if (!files.length) return;
+  const r = await relink(files);
+  toast(r.n ? `${r.n} morceau${r.n > 1 ? 'x' : ''} relié${r.n > 1 ? 's' : ''} à son fichier${r.unmatched.length ? ` · ${r.unmatched.length} fichier${r.unmatched.length > 1 ? 's' : ''} sans correspondance` : ''}` : 'Aucun fichier ne correspond aux noms attendus.', r.n ? '' : 'warn');
+  save(); renderAll();
+}
+$('#inLink').addEventListener('change', onLinkPick);
+$('#inDir').addEventListener('change', onLinkPick);
+$('#bPlay').addEventListener('click', play);
+$('#sink').addEventListener('change', ev => { const o = ev.target.selectedOptions[0]; ST.settings.sinkId = ev.target.value; ST.settings.sinkLabel = ev.target.value ? o.textContent : ''; save(); applySink(); });
+$('#sinkNames').addEventListener('click', revealSinks);
+$('#bRev').addEventListener('click', playReverse);
+$('#rate').addEventListener('input', ev => { ST.settings.rate = RATES[+ev.target.value] || 1; applyRate(); save(); });
+$('#rateOut').addEventListener('dblclick', () => { ST.settings.rate = 1; applyRate(); save(); });
+$('#pitch').addEventListener('change', ev => { ST.settings.keepPitch = ev.target.checked; applyRate(); save(); });
+$('#bPause').addEventListener('click', pause);
+$('#bNext').addEventListener('click', next);
+$('#bPrev').addEventListener('click', prev);
+$('#vol').addEventListener('input', ev => { ST.settings.volume = +ev.target.value; applyVolume(); save(); });
+
+/* ---------- paramètres ---------- */
+function renderSettings() {
+  const s = ST.settings;
+  $('#fade').value = s.fade; $('#fadeOut').textContent = fmt(s.fade, 1) + ' s';
+  $('#repOne').checked = s.repeatOne; $('#repAll').checked = s.repeatAll; $('#norm').checked = s.normalize;
+  $('#target').value = String(s.target); $('#peakProt').checked = s.peakProtect;
+  $('#target').disabled = $('#peakProt').disabled = !s.normalize;
+  $('#vol').value = s.volume;
+  const e = A.active?.entry, ni = $('#normInfo');
+  if (!e) { ni.textContent = 'Aucun morceau chargé.'; return; }
+  const an = anOf(e), nd = normDb(e);
+  const lines = [];
+  if (an?.err) lines.push('Analyse impossible (format non décodable par ce navigateur).');
+  else if (an) lines.push(`Sonie intégrée ${dB(an.lufs)} LUFS · crête ${dB(an.peak)} dBFS`);
+  else if (hasFile(e)) lines.push('Analyse de sonie en cours…');
+  if (!an && e.appleNorm) lines.push(`Sound Check Apple : ${dB(-10 * Math.log10(e.appleNorm / 1000), 1, true)} dB`);
+  lines.push(nd.known ? `Correction ${dB(nd.g, 1, true)} dB (${nd.src})${s.normalize ? '' : ' — désactivée'}` : 'Pas de correction disponible');
+  ni.innerHTML = lines.map(esc).join('<br>');
+}
+$('#fade').addEventListener('input', ev => { ST.settings.fade = +ev.target.value; $('#fadeOut').textContent = fmt(ST.settings.fade, 1) + ' s'; save(); });
+$('#repOne').addEventListener('change', ev => { ST.settings.repeatOne = ev.target.checked; save(); renderNow(); });
+$('#repAll').addEventListener('change', ev => { ST.settings.repeatAll = ev.target.checked; save(); renderNow(); });
+$('#norm').addEventListener('change', ev => { ST.settings.normalize = ev.target.checked; applyNorm(); save(); renderSettings(); });
+$('#target').addEventListener('change', ev => { ST.settings.target = +ev.target.value; applyNorm(); save(); renderSettings(); renderTracks(); });
+$('#peakProt').addEventListener('change', ev => { ST.settings.peakProtect = ev.target.checked; applyNorm(); save(); renderSettings(); renderTracks(); });
+
+/* ---------- IN / OUT ---------- */
+const curEntry = () => A.active?.entry || null;
+const curDur = () => { const d = A.active; return d && Number.isFinite(d.a.duration) && d.a.duration > 0 ? d.a.duration : (d?.entry ? durOf(d.entry) : 0); };
+function setIn(v) {
+  const e = curEntry(); if (!e) return;
+  if (v == null || v <= 0) e.inMs = 0;
+  else {
+    if (!Number.isFinite(v)) { toast('Timecode IN illisible : utilisez m:ss.cc', 'warn'); renderIO(); return; }
+    v = clamp(v, 0, curDur() || v);
+    if (e.outMs && v * 1000 >= e.outMs - 100) { toast('IN doit précéder OUT', 'warn'); renderIO(); return; }
+    e.inMs = Math.round(v * 1000);
+  }
+  ioChanged();
+}
+function setOut(v) {
+  const e = curEntry(); if (!e) return;
+  const dur = curDur();
+  if (v == null || (dur && v >= dur - 0.01)) e.outMs = 0;
+  else {
+    if (!Number.isFinite(v)) { toast('Timecode OUT illisible : utilisez m:ss.cc', 'warn'); renderIO(); return; }
+    if (v * 1000 <= (e.inMs || 0) + 100) { toast('OUT doit suivre IN', 'warn'); renderIO(); return; }
+    e.outMs = Math.round(v * 1000);
+  }
+  A.ending = false; ioChanged();
+}
+function ioChanged() { save(); renderIO(); renderTracks(); renderPlaylists(); }
+function renderIO() {
+  const e = curEntry(), dis = !e;
+  $$('#bayIO input, #bayIO button').forEach(b => b.disabled = dis);
+  $('#ioTrack').textContent = e ? e.title : 'aucun morceau chargé';
+  if (document.activeElement !== $('#inTc')) $('#inTc').value = e?.inMs ? tc(e.inMs / 1000) : '';
+  if (document.activeElement !== $('#outTc')) $('#outTc').value = e?.outMs ? tc(e.outMs / 1000) : '';
+  $('#ioUse').textContent = e ? tc(usefulOf(e, curDur())) : '—';
+  const pl = plById(A.plId) || viewPl();
+  $('#wGoIn').disabled = $('#wGoOut').disabled = dis;
+  $('#wClr').disabled = dis || !(e.inMs || e.outMs);
+  $('#wClrAll').disabled = !pl?.items.some(x => x.inMs || x.outMs);
+  $('#wIO').innerHTML = e ? `IN <b>${e.inMs ? tc(e.inMs / 1000) : 'début'}</b> · OUT <b>${e.outMs ? tc(e.outMs / 1000) : 'fin'}</b>` : '';
+}
+const pos = () => A.active ? deckTime(A.active) : 0;
+$('#inSet').addEventListener('click', () => setIn(pos()));
+/* barre sous la forme d'onde */
+function gotoIn() { const e = curEntry(); if (e) seek(inOf(e)); }
+function gotoOut() {
+  const e = curEntry(); if (!e) return;
+  const t = outOf(e, curDur());
+  if (A.playing) { pause(); setTimeout(() => seek(t), 120); }   /* pause d'abord : à OUT, la lecture enchaînerait sur le morceau suivant */
+  else seek(t);
+}
+function clearIO() {
+  const e = curEntry(); if (!e) return;
+  if (!e.inMs && !e.outMs) { toast('Ce morceau n\'a pas de point IN ni OUT.'); return; }
+  const prev = [e.inMs, e.outMs];
+  e.inMs = 0; e.outMs = 0; A.ending = false; ioChanged();
+  toast(`IN/OUT effacés : ${e.title}`, '', { label: 'Annuler', fn: () => { e.inMs = prev[0]; e.outMs = prev[1]; ioChanged(); } }, 7000);
+}
+async function clearAllIO() {
+  const pl = plById(A.plId) || viewPl(); if (!pl) return;
+  const list = pl.items.filter(e => e.inMs || e.outMs);
+  if (!list.length) { toast(`Aucun point IN/OUT dans « ${pl.name} ».`); return; }
+  const r = await ask('Effacer tous les points IN/OUT', `<p>${list.length} morceau${list.length > 1 ? 'x' : ''} de la playlist « ${esc(pl.name)} » ${list.length > 1 ? 'ont' : 'a'} des points IN/OUT. Les effacer tous ?</p>`, ['Annuler', 'Effacer tout']);
+  if (r !== 'Effacer tout') return;
+  const prev = list.map(e => [e, e.inMs, e.outMs]);
+  for (const e of list) { e.inMs = 0; e.outMs = 0; }
+  A.ending = false; ioChanged();
+  toast(`IN/OUT effacés sur ${list.length} morceau${list.length > 1 ? 'x' : ''}`, '', { label: 'Annuler', fn: () => { for (const [e, i, o] of prev) { e.inMs = i; e.outMs = o; } ioChanged(); } }, 8000);
+}
+$('#wGoIn').addEventListener('click', gotoIn);
+$('#wGoOut').addEventListener('click', gotoOut);
+$('#wClr').addEventListener('click', clearIO);
+$('#wClrAll').addEventListener('click', clearAllIO);
+$('#outSet').addEventListener('click', () => setOut(pos()));
+$('#inClr').addEventListener('click', () => setIn(null));
+$('#outClr').addEventListener('click', () => setOut(null));
+$('#inGo').addEventListener('click', () => { const e = curEntry(); if (e) seek(inOf(e)); });
+$('#outGo').addEventListener('click', () => { const e = curEntry(); if (!e) return; seek(Math.max(inOf(e), outOf(e, curDur()) - 3)); if (!A.playing) play(); });
+for (const [id, fn] of [['#inTc', setIn], ['#outTc', setOut]]) {
+  const inp = $(id);
+  inp.addEventListener('keydown', ev => { ev.stopPropagation(); if (ev.key === 'Enter') inp.blur(); if (ev.key === 'Escape') { renderIO(); inp.blur(); } });
+  inp.addEventListener('change', () => fn(parseTc(inp.value)));
+}
+
+/* ---------- affichage du morceau chargé ---------- */
+function renderNow() {
+  const e = A.active?.entry, pl = plById(A.plId);
+  $('#npTitle').textContent = e ? e.title : 'Aucun morceau';
+  $('#npSub').textContent = e ? [e.artist, e.album, pl ? 'playlist « ' + pl.name + ' »' : ''].filter(Boolean).join(' · ') : 'Choisissez une playlist, puis cliquez sur un morceau.';
+  let nx = '';
+  if (e) {
+    if (ST.settings.repeatOne) nx = '<b>Ensuite :</b> boucle sur ce morceau';
+    else { const r = neighbor(1); nx = r ? `<b>Ensuite :</b> ${esc(r[1].title)}${ST.settings.fade > 0 ? ` · fondu ${fmt(ST.settings.fade, 1)} s` : ''}` : '<b>Ensuite :</b> fin de la playlist'; }
+  }
+  $('#nextUp').innerHTML = nx;
+  const rv = !!(A.active?.rev && A.playing);
+  $('#bPlay').classList.toggle('act', A.playing && !rv);
+  $('#bRev').classList.toggle('act', rv);
+  $('#bPause').classList.toggle('act', !A.playing && !!e);
+  if ('mediaSession' in navigator) {
+    try {
+      navigator.mediaSession.metadata = e ? new MediaMetadata({ title: e.title, artist: e.artist || '', album: e.album || (pl?.name || '') }) : null;
+      navigator.mediaSession.playbackState = A.playing ? 'playing' : (e ? 'paused' : 'none');
+    } catch {}
+  }
+}
+function renderState() { renderNow(); renderTracks(); renderPlaylists(); renderIO(); renderSettings(); }
+function renderAll() { renderPlaylists(); renderTracks(); renderNow(); renderIO(); renderSettings(); updateStorage(); }
+let lastClk = '', lastRem = '', lastPill = '';
+function updateClock() {
+  const d = A.active, e = d?.entry;
+  const now = e ? deckTime(d) : 0, p = e ? tc(now) : '0:00.00';
+  let r = '&nbsp;';
+  if (e) { const dur = curDur(), out = outOf(e, dur); r = `reste −${tc(Math.max(0, out - now))} · utile ${tc(usefulOf(e, dur))}`; }
+  if (p !== lastClk) { $('#clkPos').textContent = p; lastClk = p; }
+  if (r !== lastRem) { $('#clkRem').innerHTML = r; lastRem = r; }
+  const st = !e ? 'stop' : A.playing ? (d.rev ? 'rv' : performance.now() < A.xfadeUntil ? 'fx' : 'on') : 'ps';
+  if (st !== lastPill) {
+    lastPill = st;
+    $('#pill').className = 'pill ' + (st === 'stop' ? '' : st);
+    $('#pill').textContent = { stop: 'Arrêté', on: 'Lecture', fx: 'Fondu enchaîné', ps: 'Pause', rv: 'Lecture inversée' }[st];
+  }
+}
+
+/* ---------- canvas ---------- */
+const DPR = () => Math.min(window.devicePixelRatio || 1, 2);
+function prep(cv, h) {
+  const w = Math.max(200, cv.parentElement.clientWidth - 0), d = DPR();
+  if (cv._w !== w || cv._h !== h || cv._d !== d) { cv.width = Math.round(w * d); cv.height = Math.round(h * d); cv.style.height = h + 'px'; cv._w = w; cv._h = h; cv._d = d; }
+  const g = cv.getContext('2d'); g.setTransform(d, 0, 0, d, 0, 0); g.clearRect(0, 0, w, h);
+  return { g, w, h };
+}
+function timeTicks(dur, maxN) {
+  const steps = [1, 2, 5, 10, 15, 30, 60, 120, 300, 600, 900, 1800, 3600];
+  const st = steps.find(s => dur / s <= maxN) || 3600, t = [];
+  for (let v = 0; v <= dur + 1e-6; v += st) t.push(v);
+  return t;
+}
+/* forme d'onde sur deux pistes, repères IN/OUT, tête de lecture */
+const WG = { L: 24, R: 8, T: 6, RU: 18, H: 150 };
+const WC = { key: '', dim: null, lit: null };
+function paintWave(w, h, dpr, e, an, dur, lit) {
+  const c = document.createElement('canvas'); c.width = Math.round(w * dpr); c.height = Math.round(h * dpr);
+  const g = c.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const { L, R, T, RU } = WG, pw = w - L - R, gap = 6, lh = (h - T - RU - gap) / 2, X = t => L + t / dur * pw;
+  const i0 = inOf(e), o0 = outOf(e, dur);
+  g.font = '10px ' + MONO; g.textBaseline = 'middle'; g.textAlign = 'center';
+  for (let k = 0; k < 2; k++) {
+    const y = T + k * (lh + gap);
+    g.fillStyle = '#0d1013'; g.fillRect(L, y, pw, lh);
+    g.fillStyle = C.rule; g.fillRect(L, Math.round(y + lh / 2), pw, 1);
+    g.fillStyle = C.dim; g.fillText(k ? 'R' : 'L', L / 2, y + lh / 2);
+  }
+  if (an?.pk) {
+    for (let k = 0; k < 2; k++) {
+      const arr = an.pk[k] || an.pk[0], n = arr.length, y = T + k * (lh + gap), mid = y + lh / 2;
+      for (let x = 0; x < pw; x++) {
+        const a = Math.floor(x / pw * n), b = Math.max(a + 1, Math.floor((x + 1) / pw * n));
+        let v = 0; for (let i = a; i < b && i < n; i++) if (arr[i] > v) v = arr[i];
+        const fr = v / 255, disp = fr > 0 ? clamp((20 * Math.log10(fr) + 48) / 48, 0, 1) : 0;
+        const hh = Math.max(0.5, disp * (lh / 2 - 1)), t = (x + 0.5) / pw * dur, inside = t >= i0 && t <= o0;
+        g.fillStyle = inside ? (lit ? C.phos : '#3d6cb3') : (lit ? '#5a636c' : '#2a3036');
+        g.fillRect(L + x, mid - hh, 1, hh * 2);
+      }
+    }
+  } else {
+    g.fillStyle = C.dim; g.font = '11px ' + MONO;
+    g.fillText(an?.err ? 'Forme d\'onde indisponible pour ce format' : 'Analyse de la forme d\'onde en cours…', L + pw / 2, T + lh + gap / 2);
+  }
+  if (i0 > 0 || (e.outMs && o0 < dur)) {
+    g.fillStyle = 'rgba(8,10,12,.45)';
+    if (i0 > 0) g.fillRect(L, T, X(i0) - L, h - T - RU);
+    if (e.outMs && o0 < dur) g.fillRect(X(o0), T, L + pw - X(o0), h - T - RU);
+  }
+  g.fillStyle = C.muted; g.strokeStyle = C.rule2; g.font = '10px ' + MONO; g.textBaseline = 'top';
+  const ticks = timeTicks(dur, Math.max(3, Math.floor(pw / 80)));
+  ticks.forEach((t, i) => {
+    const x = Math.round(X(t)) + .5; g.beginPath(); g.moveTo(x, h - RU); g.lineTo(x, h - RU + 4); g.stroke();
+    g.textAlign = i === 0 ? 'left' : (x > L + pw - 30 ? 'right' : 'center'); g.fillText(tc(t, false), x, h - RU + 5);
+  });
+  return c;
+}
+function drawFlag(g, x, top, bot, lab, left) {
+  g.strokeStyle = C.amber; g.lineWidth = 1.5; g.beginPath(); g.moveTo(x, top); g.lineTo(x, bot); g.stroke();
+  g.font = '600 9px ' + MONO; const tw = g.measureText(lab).width + 8;
+  g.fillStyle = C.amber; g.fillRect(left ? x - tw : x, top, tw, 13);
+  g.fillStyle = C.ink; g.textAlign = 'left'; g.textBaseline = 'middle'; g.fillText(lab, (left ? x - tw : x) + 4, top + 7);
+}
+function drawWave() {
+  const cv = $('#cvWave'), { g, w, h } = prep(cv, WG.H), d = A.active, e = d?.entry;
+  g.fillStyle = C.scope; g.fillRect(0, 0, w, h);
+  if (!e) {
+    g.fillStyle = C.dim; g.font = '12px ' + MONO; g.textAlign = 'center'; g.textBaseline = 'middle';
+    g.fillText('Aucun morceau chargé — cliquez sur un morceau de la playlist', w / 2, h / 2); cv._map = null; return;
+  }
+  const dur = curDur();
+  if (!dur) { g.fillStyle = C.dim; g.font = '12px ' + MONO; g.textAlign = 'center'; g.fillText('Chargement…', w / 2, h / 2); cv._map = null; return; }
+  const an = anOf(e), dpr = DPR(), { L, R, T, RU } = WG, pw = w - L - R, X = t => L + clamp(t, 0, dur) / dur * pw;
+  const key = [e.id, e.fileId, w, h, dpr, e.inMs, e.outMs, an ? (an.err ? 'e' : 'a') : '-', dur.toFixed(2)].join('|');
+  if (WC.key !== key) { WC.key = key; WC.dim = paintWave(w, h, dpr, e, an, dur, false); WC.lit = paintWave(w, h, dpr, e, an, dur, true); }
+  g.drawImage(WC.dim, 0, 0, w, h);
+  const px = X(deckTime(d));
+  g.save(); g.beginPath(); g.rect(0, 0, px, h); g.clip(); g.drawImage(WC.lit, 0, 0, w, h); g.restore();
+  if (e.inMs) drawFlag(g, X(inOf(e)), T, h - RU, 'IN', false);
+  if (e.outMs && outOf(e, dur) < dur) drawFlag(g, X(outOf(e, dur)), T, h - RU, 'OUT', true);
+  g.fillStyle = C.fg; g.fillRect(Math.round(px) - 1, T - 2, 2, h - RU - T + 4);
+  cv._map = { X, L, pw, dur };
+}
+const WD = { mode: null };
+const cvWave = $('#cvWave');
+function waveHit(x) {
+  const m = cvWave._map, e = A.active?.entry; if (!m || !e) return 'none';
+  if (e.inMs && Math.abs(x - m.X(inOf(e))) < 8) return 'in';
+  if (e.outMs && Math.abs(x - m.X(outOf(e, m.dur))) < 8) return 'out';
+  return 'seek';
+}
+function waveApply(x) {
+  const m = cvWave._map, e = A.active?.entry; if (!m || !e) return;
+  const t = clamp((x - m.L) / m.pw * m.dur, 0, m.dur);
+  if (WD.mode === 'seek') seek(t);
+  else if (WD.mode === 'in') { if (!e.outMs || t * 1000 < e.outMs - 100) { e.inMs = Math.round(t * 1000); renderIO(); } }
+  else if (WD.mode === 'out') { if (t * 1000 > (e.inMs || 0) + 100) { e.outMs = t >= m.dur - 0.01 ? 0 : Math.round(t * 1000); A.ending = false; renderIO(); } }
+}
+/* la tête de lecture ne se déplace qu'au double-clic ; seuls les repères IN/OUT se font glisser, bouton enfoncé */
+cvWave.addEventListener('pointerdown', ev => {
+  const mode = waveHit(ev.offsetX); if (mode !== 'in' && mode !== 'out') return;
+  WD.mode = mode; try { cvWave.setPointerCapture(ev.pointerId); } catch {} ev.preventDefault();
+});
+const waveUp = () => { if (WD.mode) ioChanged(); WD.mode = null; };
+cvWave.addEventListener('pointermove', ev => {
+  if (WD.mode && (ev.buttons & 1)) { waveApply(ev.offsetX); return; }
+  if (WD.mode) waveUp();
+  const h = waveHit(ev.offsetX);
+  cvWave.style.cursor = h === 'in' || h === 'out' ? 'ew-resize' : h === 'seek' ? 'pointer' : 'default';
+});
+cvWave.addEventListener('pointerup', waveUp); cvWave.addEventListener('pointercancel', waveUp); cvWave.addEventListener('lostpointercapture', waveUp);
+cvWave.addEventListener('dblclick', ev => {
+  const m = cvWave._map; if (!m || !A.active?.entry) return;
+  const h = waveHit(ev.offsetX); if (h !== 'seek') return;
+  seek(clamp((ev.offsetX - m.L) / m.pw * m.dur, 0, m.dur));
+});
+
+/* ---------- vumètres L / R ---------- */
+const MT = { pk: [-120, -120], rms: [-120, -120], hold: [-120, -120], holdAt: [0, 0], clipAt: [0, 0], hist: [], last: 0, buf: null };
+const ZONES = [[-60, -18, C.phos], [-18, -6, C.amber], [-6, 0, C.bad]];
+function readLevels() {
+  const out = [[-120, -120], [-120, -120]];
+  if (!A.ctx || A.ctx.state !== 'running') return out;
+  const n = A.an[0].fftSize; if (!MT.buf || MT.buf.length !== n) MT.buf = new Float32Array(n);
+  for (let k = 0; k < 2; k++) {
+    A.an[k].getFloatTimeDomainData(MT.buf);
+    let p = 0, s = 0; for (let i = 0; i < n; i++) { const v = MT.buf[i], a = v < 0 ? -v : v; if (a > p) p = a; s += v * v; }
+    out[k] = [p > 0 ? 20 * Math.log10(p) : -120, s > 0 ? 10 * Math.log10(s / n) : -120];
+  }
+  return out;
+}
+function drawMeters(now) {
+  const dt = clamp((now - (MT.last || now)) / 1000, 0, 0.1); MT.last = now;
+  const lv = readLevels();
+  for (let k = 0; k < 2; k++) {
+    const [p, r] = lv[k];
+    MT.pk[k] = Math.max(p, MT.pk[k] - 26 * dt);
+    MT.rms[k] = r > MT.rms[k] ? r : Math.max(r, MT.rms[k] - 20 * dt);
+    if (p >= MT.hold[k] || now - MT.holdAt[k] > 1500) { MT.hold[k] = p; MT.holdAt[k] = now; }
+    if (p > -0.1) MT.clipAt[k] = now;
+  }
+  MT.hist.push([lv[0][0], lv[1][0]]); if (MT.hist.length > 2400) MT.hist.splice(0, MT.hist.length - 2400);
+  /* barres */
+  const cv = $('#cvMeter'), { g, w, h } = prep(cv, 92);
+  const L = 22, R = 64, pw = w - L - R, X = db => L + clamp((db + 60) / 60, 0, 1) * pw;
+  g.fillStyle = C.scope; g.fillRect(0, 0, w, h);
+  const fillTo = (y, hh, db, alpha) => { for (const [a, b, c] of ZONES) { if (db <= a) break; g.globalAlpha = alpha; g.fillStyle = c; g.fillRect(X(a), y, X(Math.min(b, db)) - X(a), hh); } g.globalAlpha = 1; };
+  g.font = '11px ' + MONO; g.textBaseline = 'middle';
+  [[6, 'L'], [34, 'R']].forEach(([y, lab], k) => {
+    const bh = 22;
+    fillTo(y, bh, 0, 0.09);
+    fillTo(y, bh, MT.pk[k], 0.45);
+    fillTo(y + 4, bh - 8, MT.rms[k], 1);
+    if (MT.hold[k] > -60) { g.fillStyle = C.fg; g.fillRect(X(MT.hold[k]) - 1, y, 2, bh); }
+    g.fillStyle = C.muted; g.textAlign = 'center'; g.fillText(lab, L / 2, y + bh / 2);
+    g.textAlign = 'right'; g.fillStyle = MT.hold[k] > -1 ? C.bad : C.fg; g.fillText(dB(MT.hold[k]), w - 20, y + bh / 2);
+    const clip = now - MT.clipAt[k] < 2000; g.fillStyle = clip ? C.bad : '#2a1414'; g.fillRect(w - 14, y + 4, 10, bh - 8);
+  });
+  g.font = '9px ' + MONO; g.textBaseline = 'top'; g.textAlign = 'center'; g.strokeStyle = C.rule2;
+  for (const db of [-60, -48, -36, -24, -18, -12, -6, -3, 0]) { const x = Math.round(X(db)) + .5; g.beginPath(); g.moveTo(x, 62); g.lineTo(x, 66); g.stroke(); g.fillStyle = C.dim; g.fillText(db === 0 ? '0' : '−' + (-db), x, 68); }
+  g.textAlign = 'right'; g.fillText('clip', w - 2, 68);
+  /* historique des crêtes */
+  const ch = $('#cvHist'), H = prep(ch, 100), g2 = H.g, W2 = H.w;
+  const L2 = 22, pw2 = W2 - L2 - 4, gap = 6, lh = (H.h - 4 - gap) / 2;
+  g2.fillStyle = C.scope; g2.fillRect(0, 0, W2, H.h);
+  const n = Math.min(MT.hist.length, Math.floor(pw2)), start = MT.hist.length - n;
+  for (let k = 0; k < 2; k++) {
+    const y0 = 2 + k * (lh + gap);
+    g2.fillStyle = '#0d1013'; g2.fillRect(L2, y0, pw2, lh);
+    for (const db of [-18, -6]) { g2.fillStyle = C.rule; g2.fillRect(L2, Math.round(y0 + lh - (db + 48) / 48 * lh), pw2, 1); }
+    for (let i = 0; i < n; i++) {
+      const v = MT.hist[start + i][k]; if (v < -48) continue;
+      const hh = clamp((v + 48) / 48, 0, 1) * lh;
+      g2.fillStyle = v > -6 ? C.bad : v > -18 ? C.amber : C.phos;
+      g2.fillRect(L2 + pw2 - n + i, y0 + lh - hh, 1, hh);
+    }
+    g2.fillStyle = C.muted; g2.font = '11px ' + MONO; g2.textAlign = 'center'; g2.textBaseline = 'middle'; g2.fillText(k ? 'R' : 'L', L2 / 2, y0 + lh / 2);
+  }
+}
+
+/* ---------- toasts et fenêtre modale ---------- */
+function toast(msg, cls = '', action = null, ms = 4500) {
+  const t = document.createElement('div'); t.className = 'toast ' + cls;
+  t.innerHTML = `<span>${esc(msg)}</span>`;
+  if (action) { const b = document.createElement('button'); b.className = 'btn'; b.type = 'button'; b.textContent = action.label; b.onclick = () => { t.remove(); action.fn(); }; t.appendChild(b); }
+  const x = document.createElement('button'); x.className = 'ib'; x.type = 'button'; x.textContent = '✕'; x.setAttribute('aria-label', 'Fermer'); x.onclick = () => t.remove(); t.appendChild(x);
+  $('#toasts').appendChild(t);
+  while ($('#toasts').children.length > 4) $('#toasts').firstElementChild.remove();
+  setTimeout(() => t.remove(), ms);
+}
+function ask(title, html, buttons) {
+  return new Promise(res => {
+    const m = $('#modal'); $('#mTitle').textContent = title; $('#mBody').innerHTML = html;
+    const done = v => { m.hidden = true; document.removeEventListener('keydown', onKey, true); res(v); };
+    const onKey = ev => { if (ev.key === 'Escape') { ev.stopPropagation(); done(buttons[0]); } };
+    $('#mBtns').innerHTML = '';
+    buttons.forEach((b, i) => { const el = document.createElement('button'); el.type = 'button'; el.className = 'btn' + (i === buttons.length - 1 ? ' primary' : ''); el.textContent = b; el.onclick = () => done(b); $('#mBtns').appendChild(el); });
+    document.addEventListener('keydown', onKey, true);
+    m.hidden = false; $('#mBtns').lastElementChild?.focus();
+  });
+}
+
+/* ---------- stockage : nettoyage et occupation ---------- */
+let gcT;
+function scheduleGc(ms = 12000) { clearTimeout(gcT); gcT = setTimeout(gc, ms); }
+async function gc() {
+  const used = new Set();
+  for (const p of ST.playlists) for (const e of p.items) if (e.fileId) used.add(e.fileId);
+  for (const d of A.decks) if (d.entry?.fileId) used.add(d.entry.fileId);
+  for (const id of [...FILES.keys()]) if (!used.has(id)) { try { await DB.del('files', id); FILES.delete(id); } catch {} }
+  updateStorage();
+}
+async function updateStorage() {
+  let txt = `${FILES.size} fichier${FILES.size > 1 ? 's' : ''} audio`;
+  try { const e = await navigator.storage?.estimate?.(); if (e?.usage) txt += ` · ${bytes(e.usage)} utilisés`; } catch {}
+  if (!DB.db) txt += ' · stockage temporaire';
+  $('#stInfo').textContent = txt;
+}
+
+/* ---------- clavier et commandes système ---------- */
+document.addEventListener('keydown', ev => {
+  if (ev.ctrlKey || ev.metaKey || ev.altKey || !$('#modal').hidden) return;
+  const t = ev.target, tag = t?.tagName;
+  if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA' || t?.isContentEditable) return;
+  if (ev.key === ' ' || ev.code === 'Space') { if (tag === 'BUTTON') return; ev.preventDefault(); A.playing ? pause() : play(); }
+  else if (ev.key === 'ArrowRight') { ev.preventDefault(); next(); }
+  else if (ev.key === 'ArrowLeft') { ev.preventDefault(); prev(); }
+  else if (ev.key === 'i' || ev.key === 'I') setIn(pos());
+  else if (ev.key === 'o' || ev.key === 'O') setOut(pos());
+  else if (ev.key === 'r' || ev.key === 'R') playReverse();
+  else if (ev.key === 'f' || ev.key === 'F') toggleFs();
+});
+if ('mediaSession' in navigator) {
+  const ms = navigator.mediaSession, h = (k, f) => { try { ms.setActionHandler(k, f); } catch {} };
+  h('play', play); h('pause', pause); h('nexttrack', next); h('previoustrack', prev);
+  h('seekto', d => { if (d.seekTime != null) seek(d.seekTime); });
+}
+
+/* ---------- plein écran ---------- */
+const docEl = document.documentElement;
+const fsEl = () => document.fullscreenElement || document.webkitFullscreenElement || null;
+const fsCan = () => !!(document.fullscreenEnabled || document.webkitFullscreenEnabled);
+async function toggleFs() {
+  try {
+    if (fsEl()) { await (document.exitFullscreen ? document.exitFullscreen() : document.webkitExitFullscreen()); return; }
+    if (!fsCan()) throw new Error('blocked');
+    if (docEl.requestFullscreen) await docEl.requestFullscreen({ navigationUI: 'hide' });
+    else docEl.webkitRequestFullscreen();
+  } catch {
+    const inFrame = window.self !== window.top, url = /^https?:/.test(location.href) ? location.href : '';
+    if (inFrame && url) toast('Le cadre Wix bloque le plein écran. Ouvrez le lecteur seul dans un onglet, puis cliquez à nouveau sur « Plein écran ».', 'warn', { label: 'Ouvrir seul', fn: () => window.open(url, '_blank', 'noopener') }, 12000);
+    else toast(inFrame
+      ? 'Le cadre de la page (Wix) bloque le plein écran. Intégrez le lecteur par son adresse (option « Adresse du site ») pour pouvoir l\'ouvrir seul.'
+      : 'Ce navigateur a refusé le plein écran.', 'warn', null, 10000);
+  }
+}
+function renderFs() {
+  const on = !!fsEl();
+  $('#fsLbl').textContent = on ? 'Quitter le plein écran' : 'Plein écran';
+  $('#fsIco').innerHTML = on ? '<path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/>' : '<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>';
+  WC.key = '';
+}
+$('#bFs').addEventListener('click', toggleFs);
+document.addEventListener('fullscreenchange', renderFs);
+document.addEventListener('webkitfullscreenchange', renderFs);
+
+/* ---------- boucles ---------- */
+function frame(now) {
+  requestAnimationFrame(frame);
+  try { drawWave(); drawMeters(now); updateClock(); } catch (err) { console.error(err); }
+}
+let rz; addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => { WC.key = ''; }, 120); });
+
+/* ---------- démarrage ---------- */
+(async function init() {
+  $('#ver').textContent = VERSION;
+  const ok = await DB.open();
+  if (!ok) toast('Le stockage du navigateur est indisponible ici : les fichiers ne seront pas conservés après fermeture de la page.', 'warn', null, 9000);
+  try {
+    const s = await DB.get('kv', 'state');
+    if (s && Array.isArray(s.playlists)) ST = { ...ST, ...s, settings: { ...DEF, ...(s.settings || {}) } };
+  } catch {}
+  try { for (const r of await DB.all('files')) FILES.set(r.id, { id: r.id, name: r.name, size: r.size, type: r.type, an: r.an || null }); } catch {}
+  if (!ST.playlists.length) ST.playlists.push({ id: uid(), name: 'Ma playlist', items: [] });
+  if (!plById(ST.view)) ST.view = ST.playlists[0].id;
+  for (const p of ST.playlists) for (const e of p.items) if (e.fileId && !FILES.has(e.fileId)) e.fileId = findFile(e.fileName, e.size);
+  for (const m of FILES.values()) if (!m.an) queueAnalysis(m.id);
+  try { navigator.storage?.persist?.(); } catch {}
+  if (!RATES.includes(ST.settings.rate)) ST.settings.rate = 1;
+  listSinks();
+  try { navigator.mediaDevices?.addEventListener?.('devicechange', listSinks); } catch {}
+  applyVolume(); applyRate(); renderAll(); scheduleGc(4000);
+  setInterval(check, 40);
+  requestAnimationFrame(frame);
+  if (ST.last) { const p = plById(ST.last.plId), e = p?.items.find(x => x.id === ST.last.entryId); if (p && hasFile(e)) goTo(p, e, { play: false }); }
+})();
+</script>
+</body>
+</html>
